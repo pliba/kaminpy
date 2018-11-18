@@ -19,7 +19,6 @@ BNF of this mini-language:
 
 import operator
 import sys
-import inspect
 
 QUIT_COMMAND = '.q'
 
@@ -106,20 +105,15 @@ def parse(tokens):
 
 class Operator:
 
-    def __init__(self, symbol, function, arity=None):
+    def __init__(self, symbol, function, arity):
         self.symbol = symbol
         self.function = function
-        if arity is None:
-            self.arity = self.len_args()
-        else:
-            self.arity = arity
-
-    def len_args(self):
-        spec = inspect.getfullargspec(self.function)
-        return len(spec.args)
+        self.arity = arity
 
     def __eq__(self, other):
-        return self.symbol == other.symbol and self.function == other.function
+        return all([self.symbol == other.symbol,
+				    self.function == other.function,
+				    self.arity == other.arity])
 
     def eval(self, args):
         needed = self.arity
@@ -134,6 +128,7 @@ class Operator:
 # operator.add, operator.sub, etc. correctly. But in previous versions, we need
 # to inform the arity explicitly or provide user-defined functions from which
 # inspect.getfullargspec is able to extract the argument specifications.
+# For simplicity, I chose to provide de arity.
 
 OPERATORS = [
     Operator("+", operator.add, 2),
@@ -141,7 +136,7 @@ OPERATORS = [
     Operator("*", operator.mul, 2),
     Operator("/", operator.floordiv, 2),
     Operator("abs", abs, 1),
-    Operator("?", lambda cond, a, b: a if cond else b)
+    Operator("?", lambda cond, a, b: a if cond else b, 3)
 ]
 
 OPERATOR_MAP = {op.symbol: op for op in OPERATORS}
