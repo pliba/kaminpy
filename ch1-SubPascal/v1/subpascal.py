@@ -19,6 +19,7 @@ BNF of this mini-language:
 
 import operator
 import sys
+import collections
 
 QUIT_COMMAND = '.q'
 
@@ -130,10 +131,29 @@ def unary_print(x):
     return x
 
 
+OPERATORS = [
+    Operator("+", operator.add, 2),
+    Operator("-", operator.sub, 2),
+    Operator("*", operator.mul, 2),
+    Operator("/", operator.floordiv, 2),
+    Operator("=", operator.eq, 2),
+    Operator("!=", operator.ne, 2),
+    Operator(">", operator.gt, 2),
+    Operator(">=", operator.ge, 2),
+    Operator("<", operator.lt, 2),
+    Operator("<=", operator.le, 2),
+    Operator("abs", abs, 1),
+    Operator("?", lambda cond, a, b: a if cond else b, 3),
+    Operator("print", unary_print, 1),
+]
+
+OPERATOR_MAP = {op.symbol: op for op in OPERATORS}
+
 global_vars = {}
 
 
-def command_set(symbol, value):
+def command_set(symbol, value_expr):
+    value = evaluate(value_expr)
     global_vars[symbol] = value
     return value
 
@@ -144,17 +164,29 @@ def command_begin(*statements):
     return evaluate(statements[-1])
 
 
-OPERATORS = [
-    Operator("+", operator.add, 2),
-    Operator("-", operator.sub, 2),
-    Operator("*", operator.mul, 2),
-    Operator("/", operator.floordiv, 2),
-    Operator("abs", abs, 1),
-    Operator("?", lambda cond, a, b: a if cond else b, 3),
-    Operator("print", unary_print, 1),
+def command_if(condition, consequence, alternative):
+    if evaluate(condition):
+        return evaluate(consequence)
+    else:
+        return evaluate(alternative)
+
+
+def command_while(condition, block):
+    while evaluate(condition):
+        result = evaluate(block)
+    return result
+
+
+Command = collections.namedtuple('Command', 'symbol function')
+
+COMMANDS = [
+    Command('set', command_set),
+    Command('begin', command_begin),
+    Command('if', command_if),
+    Command('while', command_while),
 ]
 
-OPERATOR_MAP = {op.symbol: op for op in OPERATORS}
+COMMAND_MAP = {cmd.symbol: cmd for cmd in COMMANDS}
 
 
 def evaluate(expression):
@@ -163,11 +195,9 @@ def evaluate(expression):
         return expression
     elif isinstance(expression, str):  # operator
         symbol = expression
-        if expression == 'set':
-            return command_set
-        elif expression == 'begin':
-                return command_begin
-        else:
+        try:
+            return COMMAND_MAP[symbol]
+        except KeyError:
             try:
                 return global_vars[symbol]
             except KeyError:
@@ -178,15 +208,12 @@ def evaluate(expression):
     else:  # multi-part expression
         if len(expression) == 0:
             raise NullExpression()
-        op = evaluate(expression.pop(0))
-        if op is command_set:
-            symbol, value_expr = expression
-            return command_set(symbol, evaluate(value_expr))
-        if op is command_begin:
-            return command_begin(*expression)
-
-        args = [evaluate(subexp) for subexp in expression]
+        op = evaluate(expression[0])
+        expression = expression[1:]
+        if isinstance(op, Command):
+            return op.function(*expression)
         if isinstance(op, Operator):
+            args = [evaluate(subexp) for subexp in expression]
             return op.eval(args)
         else:
             raise InvalidOperator(op)
