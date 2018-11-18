@@ -162,7 +162,8 @@ def evaluate(expression):
     else:  # multi-part expression
         if len(expression) == 0:
             raise NullExpression()
-        op = evaluate(expression.pop(0))
+        op = evaluate(expression[0])
+        expression = expression[1:]
         if op is command_set:
             symbol, value_expr = expression
             return command_set(symbol, evaluate(value_expr))

@@ -129,7 +129,8 @@ def evaluate(expression):
         if len(expression) == 0:
             raise NullExpression()
         parts = [evaluate(subexp) for subexp in expression]
-        op = parts.pop(0)
+        op = parts[0]
+        parts = parts[1:]
         if isinstance(op, Operator):
             if len(parts) == 2:
                 arg1, arg2 = parts
