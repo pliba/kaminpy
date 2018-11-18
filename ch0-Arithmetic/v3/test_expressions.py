@@ -59,7 +59,7 @@ def test_parse_right_paren_detail():
 @mark.parametrize("source,want", [
     ("2", 2),
     ("-2", -2),
-    ("-", Operator(symbol="-", function=operator.sub)),
+    ("-", Operator(symbol="-", function=operator.sub, arity=1)),
 ])
 def test_evaluate_atoms(source, want):
     expr = parse(tokenize(source))

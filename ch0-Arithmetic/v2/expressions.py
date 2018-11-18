@@ -106,9 +106,13 @@ def parse(tokens):
 
 class Operator:
 
-    def __init__(self, symbol, function):
+    def __init__(self, symbol, function, arity=None):
         self.symbol = symbol
         self.function = function
+        if arity is None:
+            self.arity = self.len_args()
+        else:
+            self.arity = arity
 
     def len_args(self):
         spec = inspect.getfullargspec(self.function)
@@ -118,7 +122,7 @@ class Operator:
         return self.symbol == other.symbol and self.function == other.function
 
     def eval(self, args):
-        needed = self.len_args()
+        needed = self.arity
         if len(args) == needed:
             return self.function(*args)
         elif len(args) < needed:
@@ -126,13 +130,17 @@ class Operator:
         else:
             raise TooManyArguments(self.symbol)
 
+# In Python 3.7, the inspect.getfullargspec function handles the built-ins abs,
+# operator.add, operator.sub, etc. correctly. But in previous versions, we need
+# to inform the arity explicitly or provide user-defined functions from which
+# inspect.getfullargspec is able to extract the argument specifications.
 
 OPERATORS = [
-    Operator("+", operator.add),
-    Operator("-", operator.sub),
-    Operator("*", operator.mul),
-    Operator("/", operator.floordiv),
-    Operator("abs", abs),
+    Operator("+", operator.add, 2),
+    Operator("-", operator.sub, 2),
+    Operator("*", operator.mul, 2),
+    Operator("/", operator.floordiv, 2),
+    Operator("abs", abs, 1),
     Operator("?", lambda cond, a, b: a if cond else b)
 ]
 
