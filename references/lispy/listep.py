@@ -14,7 +14,7 @@ The original source code of lis.py is at [2]
 
 import operator as op
 
-class InputError(StandardError):
+class InputError(Exception):
     """generic syntax error"""
     def __init__(self, value=None):
         self.value = value
@@ -73,7 +73,7 @@ operators = {
     '+': op.add,
     '-': op.sub,
     '*': op.mul,
-    '/': op.div,
+    '/': op.floordiv,
     '**': op.pow,
     'abs': abs,
     '++': lambda x: x+1
@@ -104,12 +104,12 @@ def repl(prompt='> '):
         try:
             value = evaluate(parse(raw_input(prompt)))
         except (InputError, TypeError, ZeroDivisionError) as exc:
-            print '! ' + str(exc) 
+            print('! ' + str(exc)) 
         except KeyboardInterrupt:
-            print
+            print()
             raise SystemExit
         else:
-            print value
+            print(value)
 
 if __name__=='__main__':
     repl()
