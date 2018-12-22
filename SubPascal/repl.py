@@ -1,6 +1,8 @@
 import sys
 
 from parser import parse_exp
+from evaluator import evaluate
+import errors
 
 QUIT_COMMAND = '.q'
 
@@ -22,7 +24,11 @@ def repl(input_fn=input):
 
         # ___________________________________________ Eval
         current_exp = parse_exp(line)
-        value = eval(current_exp, {})
+        try:
+            value = evaluate(current_exp, {})
+        except errors.UndefinedVariable as exc:
+            print('***', exc)
+            continue
 
         # ___________________________________________ Print
         print(value)

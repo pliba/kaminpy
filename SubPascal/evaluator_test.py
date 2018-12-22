@@ -3,6 +3,7 @@ from pytest import raises
 from evaluator import evaluate
 import errors
 
+
 def test_evaluate_number():
     got = evaluate(7, {})
     assert 7 == got

@@ -28,7 +28,7 @@ def test_repl_quit(capsys):
     """,
     """
     > x
-    *** Undefined variable: x
+    *** Undefined variable: 'x'.
     """,
 ])
 def test_repl(capsys, session):
