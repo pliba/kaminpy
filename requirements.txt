@@ -1,1 +1,2 @@
 pytest==4
+dialogue-tester==1.0b0
