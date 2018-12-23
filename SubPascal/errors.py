@@ -20,6 +20,10 @@ class UnexpectedCloseParen(ParserException):
     """Unexpected close parenthesis."""
 
 
+class UnexpectedEndOfSource(ParserException):
+    """Unexpected end of source code."""
+
+
 class EvaluatorException(InterpreterException):
     """Generic exception while evaluating."""
 

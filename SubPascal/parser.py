@@ -2,6 +2,8 @@
 
 import collections
 
+import errors
+
 
 def tokenize(source):
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
@@ -21,10 +23,14 @@ def parse_exp(tokens):
     head = tokens.popleft()
     if head == '(':
         ast = []
-        while tokens[0] != ")":
+        while tokens and tokens[0] != ")":
             ast.append(parse_exp(tokens))
+        if not tokens:
+            raise errors.UnexpectedEndOfSource()
         tokens.popleft()  # drop ')'
         return ast
+    elif head == ')':
+        raise errors.UnexpectedCloseParen()
     else:
         return parse_token(head)
 

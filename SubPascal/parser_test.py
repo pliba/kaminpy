@@ -1,6 +1,8 @@
-from pytest import mark
+from pytest import mark, raises
 
 from parser import parse_exp, tokenize, parse_token
+
+import errors
 
 
 @mark.parametrize("source, ast", [
@@ -52,3 +54,16 @@ def test_parse_token(token, ast):
 
 # _____________________________________________________ Error cases
 
+
+def test_parse_unexpected_close_parenthesis():
+    tokens = tokenize(')')
+    with raises(errors.UnexpectedCloseParen) as excinfo:
+        parse_exp(tokens)
+    assert "Unexpected close parenthesis." == str(excinfo.value)
+
+
+def test_parse_unexpected_end_of_source():
+    tokens = tokenize('(')
+    with raises(errors.UnexpectedEndOfSource) as excinfo:
+        parse_exp(tokens)
+    assert "Unexpected end of source code." == str(excinfo.value)
