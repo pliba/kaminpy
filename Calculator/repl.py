@@ -23,7 +23,7 @@ def repl(input_fn=input):
 
         # ___________________________________________ Eval
         current_exp = parse_exp(tokenize(line))
-        value = evaluate(current_exp, {})
+        value = evaluate(current_exp)
 
         # ___________________________________________ Print
         print(value)

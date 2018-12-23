@@ -4,7 +4,7 @@ from evaluator import evaluate
 
 
 def test_evaluate_number():
-    got = evaluate(7, {})
+    got = evaluate(7)
     assert 7 == got
 
 
@@ -14,5 +14,5 @@ def test_evaluate_number():
     (['/', ['*', ['-', 100, 32], 5], 9], 37)
 ])
 def test_expression(ast, value):
-        got = evaluate(ast, {})
+        got = evaluate(ast)
         assert value == got

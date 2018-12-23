@@ -32,6 +32,10 @@ def test_repl_quit(capsys):
     > (/ (* (- 100 32) 5) 9)
     37
     """,
+    """
+    > x
+    *** Undefined variable: 'x'.
+    """,
 ])
 def test_repl(capsys, session):
     dlg = Dialogue(session)
