@@ -64,8 +64,8 @@ class UserFunction:
         self.body = body
 
     def __repr__(self):
-        formals = ', '.join(self.formals)
-        return f'<UserFunction {self.name}({formals})>'
+        formals = ' '.join(self.formals)
+        return f'<UserFunction ({self.name} {formals})>'
 
     def __call__(self, *values):
         local_env = dict(zip(self.formals, values))
@@ -122,4 +122,7 @@ def evaluate(environment, expression):
         else:
             op = fetch_function(op_name)
             values = (evaluate(environment, x) for x in args)
-            return op(*values)
+            try:
+                return op(*values)
+            except ZeroDivisionError as exc:
+                raise errors.DivisionByZero from exc

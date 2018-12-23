@@ -12,9 +12,25 @@ class InterpreterException(Exception):
         return msg
 
 
-class UndefinedVariable(InterpreterException):
+class ParserException(InterpreterException):
+    """Generic exception while parsing."""
+
+
+class UnexpectedCloseParen(ParserException):
+    """Unexpected close parenthesis."""
+
+
+class EvaluatorException(InterpreterException):
+    """Generic exception while evaluating."""
+
+
+class UndefinedVariable(EvaluatorException):
     """Undefined variable."""
 
 
-class UndefinedFunction(InterpreterException):
+class UndefinedFunction(EvaluatorException):
     """Undefined function."""
+
+
+class DivisionByZero(EvaluatorException):
+    """Division By Zero."""

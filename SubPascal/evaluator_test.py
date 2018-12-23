@@ -116,7 +116,7 @@ def test_define_function():
     want_formals = ['n']
     want_body = ['*', 'n', 2]
     got = define_function(parts)
-    assert '<UserFunction double(n)>' == got
+    assert '<UserFunction (double n)>' == got
     new_func = evaluator.function_definitions[want_name]
     assert want_name == new_func.name
     assert want_formals == new_func.formals
@@ -132,7 +132,7 @@ def mod_body():
 
 def test_user_function_repr(mod_body):
     func = UserFunction('mod', ['m', 'n'], mod_body)
-    assert '<UserFunction mod(m, n)>' == repr(func)
+    assert '<UserFunction (mod m n)>' == repr(func)
 
 
 def test_user_function_call(mod_body):
