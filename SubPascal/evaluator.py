@@ -84,6 +84,26 @@ global_environment = {}
 function_definitions = {}
 
 
+def fetch_variable(environment, name):
+    try:
+        return environment[name]
+    except KeyError:
+        try:
+            return global_environment[name]
+        except KeyError as exc:
+            raise errors.UndefinedVariable(name) from exc
+
+
+def fetch_function(name):
+    try:
+        return VALUE_OPS[name]
+    except KeyError:
+        try:
+            return function_definitions[name]
+        except KeyError as exc:
+            raise errors.UndefinedFunction(name) from exc
+
+
 def evaluate(environment, expression):
     """Given an environment, evaluate expression."""
 
@@ -91,13 +111,7 @@ def evaluate(environment, expression):
         return expression
 
     if isinstance(expression, str):  # variable
-        try:
-            return environment[expression]
-        except KeyError:
-            try:
-                return global_environment[expression]
-            except KeyError as exc:
-                raise errors.UndefinedVariable(expression) from exc
+        return fetch_variable(environment, expression)
 
     else:  # application expression
         op_name = expression[0]
@@ -106,13 +120,6 @@ def evaluate(environment, expression):
             op = CONTROL_OPS[op_name]
             return op(environment, *args)
         else:
-            try:
-                op = VALUE_OPS[op_name]
-            except KeyError:
-                try:
-                    op = function_definitions[op_name]
-                except KeyError as exc:
-                    raise errors.UndefinedFunction(op_name) from exc
-
+            op = fetch_function(op_name)
             values = (evaluate(environment, x) for x in args)
             return op(*values)
