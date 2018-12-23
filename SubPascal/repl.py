@@ -31,7 +31,7 @@ def repl(input_fn=input):
         else:
             try:
                 result = evaluate({}, current_exp)
-            except errors.UndefinedVariable as exc:
+            except (errors.UndefinedVariable, errors.UndefinedFunction) as exc:
                 print('***', exc)
                 continue
 
