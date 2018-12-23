@@ -42,9 +42,31 @@ def test_repl_quit(capsys):
     > (* n n)
     64
     """,
+    """
+    > (define mod (m n) (- m (* n (/ m n))))
+    <UserFunction mod(m, n)>
+    > (mod 11 4)
+    3
+    """,
 ])
 def test_repl(capsys, session):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
     assert dlg.session == captured.out
+
+
+def test_repl_gcd_example(capsys):
+    session = """
+    > (define mod (m n) (- m (* n (/ m n))))
+    <UserFunction mod(m, n)>
+    > (define gcd (a b) (if (= b 0) a (gcd b (mod a b))))
+    <UserFunction gcd(a, b)>
+    > (gcd 6 15)
+    3
+    """
+    dlg = Dialogue(session)
+    repl(dlg.fake_input)
+    captured = capsys.readouterr()
+    assert dlg.session == captured.out
+

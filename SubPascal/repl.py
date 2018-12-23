@@ -3,7 +3,7 @@
 import sys
 
 from parser import parse_exp, tokenize
-from evaluator import evaluate, global_environment
+from evaluator import evaluate, define_function
 import errors
 
 QUIT_COMMAND = '.q'
@@ -26,14 +26,17 @@ def repl(input_fn=input):
 
         # ___________________________________________ Eval
         current_exp = parse_exp(tokenize(line))
-        try:
-            value = evaluate({}, current_exp)
-        except errors.UndefinedVariable as exc:
-            print('***', exc)
-            continue
+        if isinstance(current_exp, list) and current_exp[0] == 'define':
+            result = define_function(current_exp[1:])
+        else:
+            try:
+                result = evaluate({}, current_exp)
+            except errors.UndefinedVariable as exc:
+                print('***', exc)
+                continue
 
         # ___________________________________________ Print
-        print(value)
+        print(result)
 
 
 if __name__=='__main__':

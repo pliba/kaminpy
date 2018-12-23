@@ -14,3 +14,7 @@ class InterpreterException(Exception):
 
 class UndefinedVariable(InterpreterException):
     """Undefined variable."""
+
+
+class UndefinedFunction(InterpreterException):
+    """Undefined function."""

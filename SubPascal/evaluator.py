@@ -55,7 +55,33 @@ CONTROL_OPS = {
     'while': while_statement,
 }
 
+
+class UserFunction:
+
+    def __init__(self, name, formals, body):
+        self.name = name
+        self.formals = formals
+        self.body = body
+
+    def __repr__(self):
+        formals = ', '.join(self.formals)
+        return f'<UserFunction {self.name}({formals})>'
+
+    def __call__(self, *values):
+        local_env = dict(zip(self.formals, values))
+        return evaluate(local_env, self.body)
+
+
+def define_function(parts):
+    name, formals, body = parts
+    user_fn = UserFunction(name, formals, body)
+    function_definitions[name] = user_fn
+    return repr(user_fn)
+
+
 global_environment = {}
+
+function_definitions = {}
 
 
 def evaluate(environment, expression):
@@ -80,6 +106,13 @@ def evaluate(environment, expression):
             op = CONTROL_OPS[op_name]
             return op(environment, *args)
         else:
-            op = VALUE_OPS[op_name]
+            try:
+                op = VALUE_OPS[op_name]
+            except KeyError:
+                try:
+                    op = function_definitions[op_name]
+                except KeyError as exc:
+                    raise errors.UndefinedFunction(op_name) from exc
+
             values = (evaluate(environment, x) for x in args)
             return op(*values)
