@@ -8,6 +8,15 @@ def tokenize(source):
     return collections.deque(spaced.split())
 
 
+def parse_token(token):
+    if token[0] == '+':
+        return token
+    try:
+        return int(token)
+    except ValueError:
+        return token
+
+
 def parse_exp(tokens):
     head = tokens.popleft()
     if head == '(':
@@ -16,10 +25,8 @@ def parse_exp(tokens):
             ast.append(parse_exp(tokens))
         tokens.popleft()  # drop ')'
         return ast
-    try:
-        return int(head)
-    except ValueError:
-        return head
+    else:
+        return parse_token(head)
 
 
 if __name__ == '__main__':
