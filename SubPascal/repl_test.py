@@ -67,10 +67,23 @@ def test_repl_quit(capsys):
     > .q
     """,
     """
+    > (
+    ... .q
+    """,
+    """
     > 3
     3
     > .q
     """,
+])
+def test_repl_quit_other_cases(capsys, session):
+    dlg = Dialogue(session)
+    repl(dlg.fake_input)
+    captured = capsys.readouterr()
+    assert dlg.session == captured.out
+
+
+@mark.parametrize("session", [
     """
     > 3
     3
