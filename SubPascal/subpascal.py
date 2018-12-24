@@ -8,7 +8,22 @@ from repl import repl
 import errors
 
 
-def run(source_file):
+def env_from_args(args):
+    env = {}
+    for arg in (a for a in args if ':' in a):
+        parts = arg.split(':')
+        if len(parts) != 2 or not all(parts):
+            continue
+        name, val = parts
+        try:
+            num = int(val)
+        except ValueError:
+            continue
+        env[name] = num
+    return env
+
+
+def run(source_file, env):
     """Read and execute opened source file"""
     source = source_file.read()
 
@@ -25,7 +40,7 @@ def run(source_file):
             define_function(current_exp[1:])
         else:
             try:
-                evaluate({}, current_exp)
+                evaluate(env, current_exp)
             except errors.EvaluatorException as exc:
                 print('***', exc, file=sys.stderr)
                 continue
@@ -35,8 +50,9 @@ def main(args):
     if not args:
         repl()
     else:
+        env = env_from_args(args[1:])
         with open(args[0]) as source_file:
-            run(source_file)
+            run(source_file, env)
 
 
 if __name__ == '__main__':

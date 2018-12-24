@@ -1,6 +1,8 @@
 import io
 
-from subpascal import run
+from pytest import mark
+
+from subpascal import run, env_from_args
 
 
 def test_run_single_line(capsys):
@@ -73,3 +75,14 @@ def test_run_unexpected_close_paren_example(capsys):
     captured = capsys.readouterr()
     assert '' == captured.out
     assert "*** Unexpected close parenthesis.\n" == captured.err
+
+
+@mark.parametrize("args, global_env", [
+    ([], {}),
+    (['x'], {}),
+    (['a:2'], {'a': 2}),
+    ([':', 'a:-1', 'y:,', 'max:999', '::'], {'a': -1, 'max': 999}),
+])
+def test_env_from_args(args, global_env):
+    got = env_from_args(args)
+    assert global_env == got
