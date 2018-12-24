@@ -15,8 +15,8 @@ Here is the greatest common divisor iterative algorithm in **SubPascal**:
         (while (<> r 0)
             (begin
                 (set m n)
-                    (set n r)
-                    (set r (mod m n))))
+                (set n r)
+                (set r (mod m n))))
         n
     )
 )
