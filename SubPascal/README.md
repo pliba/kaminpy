@@ -2,7 +2,7 @@
 
 This is a Python implementation of the small language described in chapter 1 of *Programming Languages, An Interpreter-Based Approach* by Samuel Kamin. Kamin calls it *chapter 1 language*. I call it **SubPascal**.
  
-**SubPascal** is very simple: it is written in *s-expression* syntax and integers are the only supported data type.
+**SubPascal** is [Turing Complete](https://en.wikipedia.org/wiki/Turing_completeness), but very simple: it is written in *s-expression* syntax and integers are the only supported data type.
 
 Here is the greatest common divisor iterative algorithm in **SubPascal**:
 
