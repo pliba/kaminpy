@@ -1,6 +1,6 @@
 # SubPascal
 
-This is a Python implementation of the small language described in chapter 1 of *Programming Languages, An Interpreter-Based Approach* by Samuel Kamin. Kamin calls it *chapter 1 language*. I call it **SubPascal**.
+This is a Python implementation of the toy language described in chapter 1 of *Programming Languages, An Interpreter-Based Approach* by Samuel Kamin. Kamin calls it *chapter 1 language*. I call it **SubPascal**.
  
 **SubPascal** is [Turing Complete](https://en.wikipedia.org/wiki/Turing_completeness), but very simple: it is written in *s-expression* syntax and integers are the only supported data type.
 
