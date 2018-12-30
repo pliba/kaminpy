@@ -160,3 +160,39 @@ def test_apply_user_function():
     assert 21 == evaluate({}, ast)
     # restore function_definitions
     evaluator.function_definitions = initial_fundefs
+
+
+def test_evaluate_too_many_arguments():
+    ast = ['/', 8, 4, 2]
+    with raises(errors.TooManyArguments) as excinfo:
+        evaluate({}, ast)
+    assert "Too many arguments: '/' needs 2." == str(excinfo.value)
+
+
+def test_evaluate_missing_argument():
+    ast = ['/', 8]
+    with raises(errors.MissingArgument) as excinfo:
+        evaluate({}, ast)
+    assert "Missing argument: '/' needs 2." == str(excinfo.value)
+
+
+def test_evaluate_user_function_missing_argument(mod_body):
+    # backup function_definitions
+    import evaluator
+    initial_fundefs = evaluator.function_definitions
+    evaluator.function_definitions = {}
+    # test
+    define_function(('mod', ['m', 'n'], mod_body))
+    ast = ['mod', 19]
+    with raises(errors.MissingArgument) as excinfo:
+        evaluate({}, ast)
+    assert "Missing argument: 'mod' needs 2." == str(excinfo.value)
+    # restore function_definitions
+    evaluator.function_definitions = initial_fundefs
+
+
+def test_evaluate_if_missing_argument():
+    ast = ['if', 3]
+    with raises(errors.MissingArgument) as excinfo:
+        evaluate({}, ast)
+    assert "Missing argument: 'if' needs 3." == str(excinfo.value)

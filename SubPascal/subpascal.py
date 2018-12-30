@@ -23,10 +23,11 @@ def env_from_args(args):
     return env
 
 
-def run(source_file, env):
+def run(source_file, env=None):
     """Read and execute opened source file"""
     source = source_file.read()
-
+    if env is None:
+        env = {}
     tokens = tokenize(source)
 
     while tokens:

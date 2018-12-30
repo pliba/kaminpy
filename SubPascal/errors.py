@@ -7,8 +7,12 @@ class InterpreterException(Exception):
     def __str__(self):
         msg = self.__class__.__doc__
         if self.value is not None:
-            msg = msg.rstrip(".")
-            msg += ": " + repr(self.value) + "."
+            msg = msg.rstrip('.')
+            if "'" in self.value:
+                value = self.value
+            else:
+                value = repr(self.value)
+            msg += f': {value}.'
         return msg
 
 
@@ -37,4 +41,12 @@ class UndefinedFunction(EvaluatorException):
 
 
 class DivisionByZero(EvaluatorException):
-    """Division By Zero."""
+    """Division by zero."""
+
+
+class TooManyArguments(EvaluatorException):
+    """Too many arguments."""
+
+
+class MissingArgument(EvaluatorException):
+    """Missing argument."""
