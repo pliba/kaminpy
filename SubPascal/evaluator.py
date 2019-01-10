@@ -6,21 +6,19 @@ import errors
 VARIADIC = -1  # arity of variadic functions or forms
 
 
-class ArityCheckerMixin:
-
-    def check_arity(self, args):
-        if self.arity == VARIADIC:
-            return
-        error_type = None
-        if len(args) > self.arity:
-            error_type = errors.TooManyArguments
-        elif len(args) < self.arity:
-            error_type = errors.MissingArgument
-        if error_type:
-            raise error_type(f'{self.name!r} needs {self.arity}')
+def check_arity(name, arity, args):
+    if arity == VARIADIC:
+        return
+    error_type = None
+    if len(args) > arity:
+        error_type = errors.TooManyArguments
+    elif len(args) < arity:
+        error_type = errors.MissingArgument
+    if error_type:
+        raise error_type(f'{name!r} needs {arity}')
 
 
-class Operator(ArityCheckerMixin):
+class Operator:
 
     def __init__(self, name, function, arity):
         self.name = name
@@ -28,7 +26,7 @@ class Operator(ArityCheckerMixin):
         self.arity = arity
 
     def __call__(self, *args):
-        self.check_arity(args)
+        check_arity(self.name, self.arity, args)
         return self.function(*args)
 
 
@@ -51,7 +49,7 @@ BUILT_INS = [
 VALUE_OPS = {op.name: op for op in BUILT_INS}
 
 
-class SpecialForm(ArityCheckerMixin):
+class SpecialForm:
 
     @property
     def name(self):
@@ -59,7 +57,7 @@ class SpecialForm(ArityCheckerMixin):
         return class_name.replace('Statement', '').lower()
 
     def __call__(self, environment, *args):
-        self.check_arity(args)
+        check_arity(self.name, self.arity, args)
         return self.apply(environment, *args)
 
 
@@ -111,7 +109,7 @@ CONTROL_OPS = {
 }
 
 
-class UserFunction(ArityCheckerMixin):
+class UserFunction:
 
     def __init__(self, name, formals, body):
         self.name = name
@@ -124,7 +122,7 @@ class UserFunction(ArityCheckerMixin):
         return f'<UserFunction ({self.name} {formals})>'
 
     def __call__(self, *values):
-        self.check_arity(values)
+        check_arity(self.name, self.arity, values)
         local_env = dict(zip(self.formals, values))
         return evaluate(local_env, self.body)
 
