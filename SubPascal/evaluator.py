@@ -6,7 +6,7 @@ import errors
 VARIADIC = -1  # arity of variadic functions or forms
 
 
-def check_arity(name, arity, args):
+def check_arity(form_name, arity, args):
     if arity == VARIADIC:
         return
     error_type = None
@@ -15,7 +15,7 @@ def check_arity(name, arity, args):
     elif len(args) < arity:
         error_type = errors.MissingArgument
     if error_type:
-        raise error_type(f'{name!r} needs {arity}')
+        raise error_type(f'{form_name!r} needs {arity}')
 
 
 class Operator:
