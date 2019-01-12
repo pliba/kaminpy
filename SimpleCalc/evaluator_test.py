@@ -1,6 +1,8 @@
 from pytest import mark, approx
 
-from evaluator import tokenize, evaluate
+from dialogue import Dialogue
+
+from evaluator import tokenize, evaluate, repl
 
 
 @mark.parametrize("source, want", [
@@ -23,6 +25,31 @@ def test_tokenize(source, want):
     ('(+ 2 (* 3 5))', 17),
     ('(/ (* (- 100 32) 5) 9)', approx(37.7, .01)),
 ])
-def test_eval(source, want):
+def test_evaluate(source, want):
     result = evaluate(tokenize(source))
     assert want == result
+
+
+@mark.parametrize("session", [
+    """
+    > .q
+    """,
+    """
+    > .q
+    """,
+    """
+    > 3
+    3.0
+    > .q
+    """,
+    """
+    > (+ 1 2 3 4)
+    10.0
+    > .q
+    """,
+])
+def test_repl_quit_other_cases(capsys, session):
+    dlg = Dialogue(session)
+    repl(dlg.fake_input)
+    captured = capsys.readouterr()
+    assert dlg.session == captured.out

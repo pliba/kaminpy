@@ -1,3 +1,6 @@
+import sys
+
+
 def tokenize(source):
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
     return spaced.split()
@@ -27,12 +30,11 @@ def evaluate(tokens):
 QUIT_COMMAND = '.q'
 
 
-def repl():
+def repl(input_fn=input):
     """Read-Eval-Print-Loop"""
-    print(f'To exit, type {QUIT_COMMAND}')
-
+    print(f'To exit, type {QUIT_COMMAND}', file=sys.stderr)
     while True:
-        line = input('> ')                 # Read
+        line = input_fn('> ')              # Read
         if line == QUIT_COMMAND:
             break
         value = evaluate(tokenize(line))   # Eval
