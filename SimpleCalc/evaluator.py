@@ -19,7 +19,7 @@ def evaluate(tokens):
     if head == '(':
         op = OPERATORS[tokens.pop(0)]
         args = []
-        while tokens and tokens[0] != ')':
+        while tokens[0] != ')':
             args.append(evaluate(tokens))
         tokens.pop(0)  # drop ')'
         return op(*args)
