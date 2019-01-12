@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 
 
@@ -39,3 +41,7 @@ def repl(input_fn=input):
             break
         value = evaluate(tokenize(line))   # Eval
         print(value)                       # Print
+
+
+if __name__ == '__main__':
+    repl()

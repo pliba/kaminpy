@@ -2,7 +2,7 @@ from pytest import mark, approx
 
 from dialogue import Dialogue
 
-from evaluator import tokenize, evaluate, repl
+from calc import tokenize, evaluate, repl
 
 
 @mark.parametrize("source, want", [
