@@ -2,13 +2,14 @@
 
 import sys
 
+from typing import List, Dict, Callable
 
-def tokenize(source):
+def tokenize(source: str) -> List[str]:
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
     return spaced.split()
 
 
-OPERATORS = {
+OPERATORS: Dict[str, Callable[[float, float], float]] = {
     '+': lambda *args: sum(args),
     '-': lambda a, b: a - b,
     '*': lambda a, b: a * b,
@@ -16,7 +17,7 @@ OPERATORS = {
 }
 
 
-def evaluate(tokens):
+def evaluate(tokens: List[str]) -> float:
     head = tokens.pop(0)
     if head == '(':
         op = OPERATORS[tokens.pop(0)]
