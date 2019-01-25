@@ -1,5 +1,7 @@
 import operator
-from typing import Any, Callable, Dict, Optional, Sequence, Type, Union
+from typing import (
+    Any, Callable, Dict, List, Optional, Sequence, Type, Union
+)
 
 import errors
 from parser import Expression
@@ -116,7 +118,7 @@ CONTROL_OPS: Dict[str, SpecialForm] = {
 
 class UserFunction:
 
-    def __init__(self, name, formals, body):
+    def __init__(self, name: str, formals: List[str], body: Expression):
         self.name = name
         self.formals = formals
         self.arity = len(formals)

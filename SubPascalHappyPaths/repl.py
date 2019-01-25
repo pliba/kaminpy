@@ -2,7 +2,7 @@
 
 import sys
 
-from parser import parse_exp, tokenize
+from parser import parse, tokenize
 from evaluator import evaluate, define_function
 import errors
 
@@ -25,7 +25,7 @@ def repl(input_fn=input):
             continue
 
         # ___________________________________________ Eval
-        current_exp = parse_exp(tokenize(line))
+        current_exp = parse(tokenize(line))
         if isinstance(current_exp, list) and current_exp[0] == 'define':
             result = define_function(current_exp[1:])
         else:
@@ -39,5 +39,5 @@ def repl(input_fn=input):
         print(result)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     repl()

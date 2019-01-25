@@ -1,6 +1,6 @@
 from pytest import mark
 
-from dialogue import Dialogue
+from dialogue import Dialogue, normalize
 
 from repl import repl
 
@@ -9,12 +9,12 @@ def test_repl_quit(capsys):
     dlg = Dialogue('> .q\n')
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 @mark.parametrize("session", [
     """
-    > 
+    >
     > .q
     """,
     """
@@ -53,7 +53,7 @@ def test_repl(capsys, session):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 def test_repl_gcd_example(capsys):
@@ -68,5 +68,4 @@ def test_repl_gcd_example(capsys):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
-
+    assert dlg.session == normalize(captured.out)

@@ -27,10 +27,10 @@ def test_evaluate_undefined_variable():
 
 
 def test_set_global():
-    # backup global_environment
+    # backup global_env
     import evaluator
-    initial_globals = evaluator.global_environment
-    evaluator.global_environment = {}
+    initial_globals = evaluator.global_env
+    evaluator.global_env = {}
     # test
     ast = ['set', 'test_set_var', ['/', 6, 2]]
     want_name = 'test_set_var'
@@ -39,10 +39,10 @@ def test_set_global():
     got = evaluate(empty_env, ast)
     assert want_value == got
     assert len(empty_env) == 0
-    assert want_name in evaluator.global_environment
-    assert want_value == evaluator.global_environment[want_name]
-    # restore global_environment
-    evaluator.global_environment = initial_globals
+    assert want_name in evaluator.global_env
+    assert want_value == evaluator.global_env[want_name]
+    # restore global_env
+    evaluator.global_env = initial_globals
 
 
 @mark.parametrize("ast ,want", [
@@ -68,8 +68,8 @@ def test_begin(capsys):
     ast = ['begin',
            ['print', 1],
            ['print', 2],
-           ['print', 3]
-          ]
+           ['print', 3],
+           ]
     got = evaluate({}, ast)
     assert 3 == got
     captured = capsys.readouterr()
@@ -85,10 +85,10 @@ def test_while_false(capsys):
 
 
 def test_while(capsys):
-    # backup global_environment
+    # backup global_env
     import evaluator
-    initial_globals = evaluator.global_environment
-    evaluator.global_environment = {}
+    initial_globals = evaluator.global_env
+    evaluator.global_env = {}
     # test
     ast = ['begin',
            ['set', 'x', 3],
@@ -101,15 +101,15 @@ def test_while(capsys):
     assert 0 == got
     captured = capsys.readouterr()
     assert '3\n2\n1\n' == captured.out
-    # restore global_environment
-    evaluator.global_environment = initial_globals
+    # restore global_env
+    evaluator.global_env = initial_globals
 
 
 def test_define_function():
-    # backup function_definitions
+    # backup function_env
     import evaluator
-    initial_fundefs = evaluator.function_definitions
-    evaluator.function_definitions = {}
+    initial_fundefs = evaluator.function_env
+    evaluator.function_env = {}
     # test
     parts = ['double', ['n'], ['*', 'n', 2]]
     want_name = 'double'
@@ -117,12 +117,12 @@ def test_define_function():
     want_body = ['*', 'n', 2]
     got = define_function(parts)
     assert '<UserFunction double(n)>' == got
-    new_func = evaluator.function_definitions[want_name]
+    new_func = evaluator.function_env[want_name]
     assert want_name == new_func.name
     assert want_formals == new_func.formals
     assert want_body == new_func.body
-    # restore function_definitions
-    evaluator.function_definitions = initial_fundefs
+    # restore function_env
+    evaluator.function_env = initial_fundefs
 
 
 @fixture
@@ -149,14 +149,14 @@ def test_evaluate_undefined_function():
 
 
 def test_apply_user_function():
-    # backup function_definitions
+    # backup function_env
     import evaluator
-    initial_fundefs = evaluator.function_definitions
-    evaluator.function_definitions = {}
+    initial_fundefs = evaluator.function_env
+    evaluator.function_env = {}
     # test
     parts = 'triple', ['n'], ['*', 'n', 3]
     define_function(parts)
     ast = ['triple', 7]
     assert 21 == evaluate({}, ast)
-    # restore function_definitions
-    evaluator.function_definitions = initial_fundefs
+    # restore function_env
+    evaluator.function_env = initial_fundefs

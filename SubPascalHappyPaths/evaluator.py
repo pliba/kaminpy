@@ -1,6 +1,8 @@
 import operator
+from typing import Callable, Dict, List
 
 import errors
+from parser import Expression
 
 
 def print_fn(n):
@@ -25,7 +27,7 @@ def set_statement(environment, name, val_exp):
     if name in environment:
         environment[name] = value
     else:
-        global_environment[name] = value
+        global_env[name] = value
     return value
 
 
@@ -48,7 +50,7 @@ def while_statement(environment, condition, block):
     return 0
 
 
-CONTROL_OPS = {
+CONTROL_OPS: Dict[str, Callable[..., int]] = {
     'set': set_statement,
     'if': if_statement,
     'begin': begin_statement,
@@ -58,7 +60,7 @@ CONTROL_OPS = {
 
 class UserFunction:
 
-    def __init__(self, name, formals, body):
+    def __init__(self, name: str, formals: List[str], body: Expression):
         self.name = name
         self.formals = formals
         self.body = body
@@ -75,13 +77,15 @@ class UserFunction:
 def define_function(parts):
     name, formals, body = parts
     user_fn = UserFunction(name, formals, body)
-    function_definitions[name] = user_fn
+    function_env[name] = user_fn
     return repr(user_fn)
 
 
-global_environment = {}
+ValueEnv = Dict[str, int]
+FunctionEnv = Dict[str, UserFunction]
 
-function_definitions = {}
+global_env: ValueEnv = {}
+function_env: FunctionEnv = {}
 
 
 def fetch_variable(environment, name):
@@ -89,7 +93,7 @@ def fetch_variable(environment, name):
         return environment[name]
     except KeyError:
         try:
-            return global_environment[name]
+            return global_env[name]
         except KeyError as exc:
             raise errors.UndefinedVariable(name) from exc
 
@@ -99,27 +103,27 @@ def fetch_function(name):
         return VALUE_OPS[name]
     except KeyError:
         try:
-            return function_definitions[name]
+            return function_env[name]
         except KeyError as exc:
             raise errors.UndefinedFunction(name) from exc
 
 
-def evaluate(environment, expression):
+def evaluate(env: ValueEnv, exp: Expression) -> int:
     """Given an environment, evaluate expression."""
 
-    if isinstance(expression, int):  # number
-        return expression
+    if isinstance(exp, int):  # number
+        return exp
 
-    if isinstance(expression, str):  # variable
-        return fetch_variable(environment, expression)
+    if isinstance(exp, str):  # variable
+        return fetch_variable(env, exp)
 
     else:  # application expression
-        op_name = expression[0]
-        args = expression[1:]
+        op_name = exp[0]
+        args = exp[1:]
         if op_name in CONTROL_OPS:
-            op = CONTROL_OPS[op_name]
-            return op(environment, *args)
+            statement = CONTROL_OPS[op_name]
+            return statement(env, *args)
         else:
             op = fetch_function(op_name)
-            values = (evaluate(environment, x) for x in args)
+            values = tuple(evaluate(env, x) for x in args)
             return op(*values)
