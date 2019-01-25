@@ -10,4 +10,4 @@ This is the simplest example of an expression evaluator in the **kaminpy** repos
 
 To highlight the essential recursive algorithm, there is no error checking in `evaluate`.
 
-The Jupyter Notebook has the same code, minus the tests.
+The Jupyter Notebook has the same code (minus the tests), with simpler type annotations.
