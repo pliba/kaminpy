@@ -2,7 +2,7 @@
 
 import sys
 
-from parser import parse_exp, tokenize
+from parser import parse, tokenize
 from evaluator import evaluate
 import errors
 
@@ -25,7 +25,7 @@ def repl(input_fn=input):
             continue
 
         # ___________________________________________ Eval
-        current_exp = parse_exp(tokenize(line))
+        current_exp = parse(tokenize(line))
         try:
             value = evaluate(current_exp)
         except errors.UndefinedVariable as exc:
@@ -36,5 +36,5 @@ def repl(input_fn=input):
         print(value)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     repl()

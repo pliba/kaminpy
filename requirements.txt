@@ -1,2 +1,4 @@
-pytest==4
-dialogue-tester==1.0b0
+pytest==4.0.0
+dialogue-tester==1.0b5
+mypy==0.660
+flake8==3.6.0

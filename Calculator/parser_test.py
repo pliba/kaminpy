@@ -1,14 +1,14 @@
 from pytest import mark
 
-from parser import parse_exp, tokenize
+from parser import parse, tokenize
 
 
 @mark.parametrize("source, ast", [
     ('7', 7),
     ('+', '+'),
 ])
-def test_parse_exp_atoms(source, ast):
-    got = parse_exp(tokenize(source))
+def test_parse_atoms(source, ast):
+    got = parse(tokenize(source))
     assert ast == got
 
 
@@ -31,6 +31,6 @@ def test_tokenize(source, want):
     ('(+ 2 (* 3 5))', ['+', 2, ['*', 3, 5]]),
     ('(/ (* (- 100 32) 5) 9)', ['/', ['*', ['-', 100, 32], 5], 9])
 ])
-def test_parse_exp_application(source, ast):
-    got = parse_exp(tokenize(source))
+def test_parse_application(source, ast):
+    got = parse(tokenize(source))
     assert ast == got

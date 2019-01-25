@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from dialogue import Dialogue
+from dialogue import Dialogue, normalize
 
 from repl import repl, multiline_input, QuitRequest
 import errors
@@ -20,7 +20,7 @@ def test_multiline_input(capsys, session, result):
     got = multiline_input('1|', '2|', input_fn=dlg.fake_input)
     assert result == got
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 @mark.parametrize("session", [
@@ -58,7 +58,7 @@ def test_repl_quit(capsys):
     dlg = Dialogue('> .q\n')
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 @mark.parametrize("session", [
@@ -80,7 +80,7 @@ def test_repl_quit_other_cases(capsys, session):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 @mark.parametrize("session", [
@@ -115,7 +115,7 @@ def test_repl(capsys, session):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 def test_repl_gcd_example(capsys):
@@ -130,7 +130,7 @@ def test_repl_gcd_example(capsys):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
 
 
 def test_repl_gcd_example_multiline(capsys):
@@ -157,4 +157,4 @@ def test_repl_gcd_example_multiline(capsys):
     dlg = Dialogue(session)
     repl(dlg.fake_input)
     captured = capsys.readouterr()
-    assert dlg.session == captured.out
+    assert dlg.session == normalize(captured.out)
