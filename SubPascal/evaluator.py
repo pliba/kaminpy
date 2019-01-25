@@ -1,5 +1,5 @@
 import operator
-from typing import Dict, Union
+from typing import Tuple, Any, Optional, Type, Dict, Union, Callable
 
 import errors
 from parser import Expression
@@ -7,10 +7,10 @@ from parser import Expression
 VARIADIC = -1  # arity of variadic functions or forms
 
 
-def check_arity(form_name, arity, args):
+def check_arity(form_name: str, arity: int, args: Tuple[Any, ...]):
     if arity == VARIADIC:
         return
-    error_type = None
+    error_type: Optional[Type[Exception]] = None
     if len(args) > arity:
         error_type = errors.TooManyArguments
     elif len(args) < arity:
@@ -21,12 +21,12 @@ def check_arity(form_name, arity, args):
 
 class Operator:
 
-    def __init__(self, name, function, arity):
+    def __init__(self, name: str, function: Callable, arity: int):
         self.name = name
         self.function = function
         self.arity = arity
 
-    def __call__(self, *args):
+    def __call__(self, *args: int) -> int:
         check_arity(self.name, self.arity, args)
         return self.function(*args)
 
@@ -60,6 +60,9 @@ class SpecialForm:
     def __call__(self, environment, *args):
         check_arity(self.name, self.arity, args)
         return self.apply(environment, *args)
+
+    def apply(self, *args):
+        raise NotImplementedError
 
 
 class SetStatement(SpecialForm):
@@ -142,9 +145,9 @@ FunctionEnv = Dict[str, UserFunction]
 function_definitions: FunctionEnv = {}
 
 
-def fetch_variable(environment: ValueEnv, name):
+def fetch_variable(env: ValueEnv, name: str) -> int:
     try:
-        return environment[name]
+        return env[name]
     except KeyError:
         try:
             return global_environment[name]
@@ -165,28 +168,24 @@ def fetch_function(name: str) -> Function:
             raise errors.UndefinedFunction(name) from exc
 
 
-Form = Union[Function, SpecialForm]
-
-
-def evaluate(environment: ValueEnv, exp: Expression) -> int:
+def evaluate(env: ValueEnv, exp: Expression) -> int:
     """Given an environment, evaluate expression."""
 
     if isinstance(exp, int):  # number
         return exp
 
     if isinstance(exp, str):  # variable
-        return fetch_variable(environment, exp)
+        return fetch_variable(env, exp)
 
     else:  # application expression
         op_name = exp[0]
         args = exp[1:]
-        op: Form
         if op_name in CONTROL_OPS:
-            op = CONTROL_OPS[op_name]
-            return op(environment, *args)
+            statement = CONTROL_OPS[op_name]
+            return statement(env, *args)
         else:
             op = fetch_function(op_name)
-            values = (evaluate(environment, x) for x in args)
+            values = tuple(evaluate(env, x) for x in args)
             try:
                 return op(*values)
             except ZeroDivisionError as exc:

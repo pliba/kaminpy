@@ -34,7 +34,7 @@ def parse_exp(tokens: Deque[str]) -> Expression:
             ast.append(parse_exp(tokens))
         if not tokens:
             raise errors.UnexpectedEndOfSource()
-        tokens.popleft()  # drop ')'
+        tokens.popleft()  # discard ')'
         return ast
     elif head == ')':
         raise errors.UnexpectedCloseParen()

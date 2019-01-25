@@ -15,7 +15,7 @@ Atom = Union[str, int]
 Expression = Union[Atom, List]
 
 
-def parse_atom(token: str):
+def parse_atom(token: str) -> Atom:
     if token[0] == '+':
         return token
     try:
