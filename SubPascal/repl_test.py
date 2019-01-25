@@ -51,7 +51,8 @@ def test_multiline_input_unexpected_close_paren(session, error_str):
     dlg = Dialogue(session)
     with raises(errors.UnexpectedCloseParen) as excinfo:
         multiline_input(input_fn=dlg.fake_input)
-    assert f"Unexpected close parenthesis: '{error_str}'." == str(excinfo.value)
+    want_msg = f"Unexpected close parenthesis: '{error_str}'."
+    assert want_msg == str(excinfo.value)
 
 
 def test_repl_quit(capsys):
@@ -63,7 +64,7 @@ def test_repl_quit(capsys):
 
 @mark.parametrize("session", [
     """
-    > 
+    >
     > .q
     """,
     """

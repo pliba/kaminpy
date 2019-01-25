@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from parser import parse_exp, tokenize, parse_token
+from parser import parse_exp, tokenize, parse_atom
 
 import errors
 
@@ -48,8 +48,8 @@ def test_parse_exp_application(source, ast):
     ('+', '+'),
     ('+1', '+1'),
 ])
-def test_parse_token(token, ast):
-    got = parse_token(token)
+def test_parse_atom(token, ast):
+    got = parse_atom(token)
     assert ast == got
 
 # _____________________________________________________ Error cases

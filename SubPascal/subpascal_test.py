@@ -26,7 +26,7 @@ DOUBLING_EXAMPLE = """
         (print n)
         (set n (* n 2))
     )
-)      
+)
 """
 
 

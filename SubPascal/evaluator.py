@@ -1,7 +1,8 @@
 import operator
+from typing import Dict, Union
 
 import errors
-
+from parser import Expression
 
 VARIADIC = -1  # arity of variadic functions or forms
 
@@ -101,7 +102,7 @@ class WhileStatement(SpecialForm):
         return 0
 
 
-CONTROL_OPS = {
+CONTROL_OPS: Dict[str, SpecialForm] = {
     'set': SetStatement(),
     'if': IfStatement(),
     'begin': BeginStatement(),
@@ -134,12 +135,14 @@ def define_function(parts):
     return repr(user_fn)
 
 
-global_environment = {}
+ValueEnv = Dict[str, int]
+global_environment: ValueEnv = {}
 
-function_definitions = {}
+FunctionEnv = Dict[str, UserFunction]
+function_definitions: FunctionEnv = {}
 
 
-def fetch_variable(environment, name):
+def fetch_variable(environment: ValueEnv, name):
     try:
         return environment[name]
     except KeyError:
@@ -149,7 +152,10 @@ def fetch_variable(environment, name):
             raise errors.UndefinedVariable(name) from exc
 
 
-def fetch_function(name):
+Function = Union[Operator, UserFunction]
+
+
+def fetch_function(name: str) -> Function:
     try:
         return VALUE_OPS[name]
     except KeyError:
@@ -159,18 +165,22 @@ def fetch_function(name):
             raise errors.UndefinedFunction(name) from exc
 
 
-def evaluate(environment, expression):
+Form = Union[Function, SpecialForm]
+
+
+def evaluate(environment: ValueEnv, exp: Expression) -> int:
     """Given an environment, evaluate expression."""
 
-    if isinstance(expression, int):  # number
-        return expression
+    if isinstance(exp, int):  # number
+        return exp
 
-    if isinstance(expression, str):  # variable
-        return fetch_variable(environment, expression)
+    if isinstance(exp, str):  # variable
+        return fetch_variable(environment, exp)
 
     else:  # application expression
-        op_name = expression[0]
-        args = expression[1:]
+        op_name = exp[0]
+        args = exp[1:]
+        op: Form
         if op_name in CONTROL_OPS:
             op = CONTROL_OPS[op_name]
             return op(environment, *args)

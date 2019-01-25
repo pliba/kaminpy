@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
 import sys
+from typing import List
 
 from parser import parse_exp, tokenize
-from evaluator import evaluate, define_function
+from evaluator import evaluate, define_function, ValueEnv
 from repl import repl
 import errors
 
 
-def env_from_args(args):
+def env_from_args(args: List[str]) -> ValueEnv:
     env = {}
     for arg in (a for a in args if ':' in a):
         parts = arg.split(':')
@@ -23,7 +24,7 @@ def env_from_args(args):
     return env
 
 
-def run(source_file, env=None):
+def run(source_file, env: ValueEnv = None):
     """Read and execute opened source file"""
     source = source_file.read()
     if env is None:
