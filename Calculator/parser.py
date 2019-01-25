@@ -1,7 +1,8 @@
 import collections
 
+from typing import Deque
 
-def tokenize(source):
+def tokenize(source: str) -> Deque[str]:
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
     return collections.deque(spaced.split())
 

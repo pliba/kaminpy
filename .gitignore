@@ -3,3 +3,7 @@
 .venv*/
 .pytest_cache/
 .idea/
+.ipynb_checkpoints
+.mypy_cache/
+.vscode/
+

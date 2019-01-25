@@ -4,12 +4,15 @@ import sys
 
 from typing import List, Dict, Callable
 
+
 def tokenize(source: str) -> List[str]:
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
     return spaced.split()
 
 
-OPERATORS: Dict[str, Callable[[float, float], float]] = {
+FunctionMap = Dict[str, Callable[..., float]]
+
+OPERATORS: FunctionMap = {
     '+': lambda *args: sum(args),
     '-': lambda a, b: a - b,
     '*': lambda a, b: a * b,
