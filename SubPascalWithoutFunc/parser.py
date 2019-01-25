@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 
 import collections
+from typing import Deque, List, Union
 
 
-def tokenize(source):
+Atom = Union[str, int]
+Expression = Union[Atom, List]
+
+
+def tokenize(source: str) -> Deque[str]:
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
     return collections.deque(spaced.split())
 
 
-def parse_exp(tokens):
+def parse(tokens: Deque[str]) -> Expression:
     head = tokens.popleft()
     if head == '(':
         ast = []
         while tokens[0] != ")":
-            ast.append(parse_exp(tokens))
-        tokens.popleft()  # drop ')'
+            ast.append(parse(tokens))
+        tokens.popleft()  # discard ')'
         return ast
     try:
         return int(head)
@@ -24,4 +29,4 @@ def parse_exp(tokens):
 
 if __name__ == '__main__':
     import sys
-    print(parse_exp(tokenize(sys.stdin.read())))
+    print(parse(tokenize(sys.stdin.read())))

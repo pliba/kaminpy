@@ -1,6 +1,8 @@
 import operator
+from typing import Callable, Dict
 
 import errors
+from parser import Expression
 
 
 def print_fn(n):
@@ -8,7 +10,9 @@ def print_fn(n):
     return n
 
 
-VALUE_OPS = {
+OperatorEnv = Dict[str, Callable[..., int]]
+
+VALUE_OPS: OperatorEnv = {
     '+': operator.add,
     '-': operator.sub,
     '*': operator.mul,
@@ -25,7 +29,7 @@ def set_statement(environment, name, val_exp):
     if name in environment:
         environment[name] = value
     else:
-        global_environment[name] = value
+        global_env[name] = value
     return value
 
 
@@ -48,38 +52,41 @@ def while_statement(environment, condition, block):
     return 0
 
 
-CONTROL_OPS = {
+CONTROL_OPS: Dict[str, Callable[..., int]] = {
     'set': set_statement,
     'if': if_statement,
     'begin': begin_statement,
     'while': while_statement,
 }
 
-global_environment = {}
+
+ValueEnv = Dict[str, int]
+
+global_env: ValueEnv = {}
 
 
-def evaluate(environment, expression):
+def evaluate(env: ValueEnv, exp: Expression) -> int:
     """Given an environment, evaluate expression."""
 
-    if isinstance(expression, int):  # number
-        return expression
+    if isinstance(exp, int):  # number
+        return exp
 
-    if isinstance(expression, str):  # variable
+    if isinstance(exp, str):  # variable
         try:
-            return environment[expression]
+            return env[exp]
         except KeyError:
             try:
-                return global_environment[expression]
+                return global_env[exp]
             except KeyError as exc:
-                raise errors.UndefinedVariable(expression) from exc
+                raise errors.UndefinedVariable(exp) from exc
 
     else:  # application expression
-        op_name = expression[0]
-        args = expression[1:]
+        op_name = exp[0]
+        args = exp[1:]
         if op_name in CONTROL_OPS:
-            op = CONTROL_OPS[op_name]
-            return op(environment, *args)
+            statement = CONTROL_OPS[op_name]
+            return statement(env, *args)
         else:
             op = VALUE_OPS[op_name]
-            values = (evaluate(environment, x) for x in args)
+            values = tuple(evaluate(env, x) for x in args)
             return op(*values)

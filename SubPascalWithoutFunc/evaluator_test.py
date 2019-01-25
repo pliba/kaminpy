@@ -27,10 +27,10 @@ def test_evaluate_undefined_variable():
 
 
 def test_set_global():
-    # backup global_environment
+    # backup global_env
     import evaluator
-    initial_globals = evaluator.global_environment
-    evaluator.global_environment = {}
+    initial_globals = evaluator.global_env
+    evaluator.global_env = {}
     # test
     ast = ['set', 'test_set_var', ['/', 6, 2]]
     want_name = 'test_set_var'
@@ -39,10 +39,10 @@ def test_set_global():
     got = evaluate(empty_env, ast)
     assert want_value == got
     assert len(empty_env) == 0
-    assert want_name in evaluator.global_environment
-    assert want_value == evaluator.global_environment[want_name]
-    # restore global_environment
-    evaluator.global_environment = initial_globals
+    assert want_name in evaluator.global_env
+    assert want_value == evaluator.global_env[want_name]
+    # restore global_env
+    evaluator.global_env = initial_globals
 
 
 @mark.parametrize("ast ,want", [
@@ -68,8 +68,8 @@ def test_begin(capsys):
     ast = ['begin',
            ['print', 1],
            ['print', 2],
-           ['print', 3]
-          ]
+           ['print', 3],
+           ]
     got = evaluate({}, ast)
     assert 3 == got
     captured = capsys.readouterr()
@@ -85,10 +85,10 @@ def test_while_false(capsys):
 
 
 def test_while(capsys):
-    # backup global_environment
+    # backup global_env
     import evaluator
-    initial_globals = evaluator.global_environment
-    evaluator.global_environment = {}
+    initial_globals = evaluator.global_env
+    evaluator.global_env = {}
     # test
     ast = ['begin',
            ['set', 'x', 3],
@@ -101,5 +101,5 @@ def test_while(capsys):
     assert 0 == got
     captured = capsys.readouterr()
     assert '3\n2\n1\n' == captured.out
-    # restore global_environment
-    evaluator.global_environment = initial_globals
+    # restore global_env
+    evaluator.global_env = initial_globals

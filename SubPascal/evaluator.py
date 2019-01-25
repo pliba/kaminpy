@@ -49,7 +49,9 @@ BUILT_INS = [
     Operator('print', print_fn, 1),
 ]
 
-VALUE_OPS = {op.name: op for op in BUILT_INS}
+OperatorEnv = Dict[str, Operator]
+
+VALUE_OPS: OperatorEnv = {op.name: op for op in BUILT_INS}
 
 
 class SpecialForm:

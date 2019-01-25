@@ -10,7 +10,9 @@ def print_fn(n):
     return n
 
 
-VALUE_OPS = {
+OperatorEnv = Dict[str, Callable[..., int]]
+
+VALUE_OPS: OperatorEnv = {
     '+': operator.add,
     '-': operator.sub,
     '*': operator.mul,

@@ -12,9 +12,11 @@ in Samuel Kamin's excellent PLIBA [1] book.
 
 Examples designed to make it easier to understand the essentials of an interpreter.
 
-* [Calculator](https://github.com/pliba/kaminpy/tree/master/Calculator): arithmetic expressions calculator.
+* [SimpleCalc](https://github.com/pliba/kaminpy/tree/master/SimpleCalc): single-module arithmetic expressions calculator.
 
-* [CalcWithVars](https://github.com/pliba/kaminpy/tree/master/CalcWithVars): arithmetic expressions calculator with veriables.
+* [Calculator](https://github.com/pliba/kaminpy/tree/master/Calculator): arithmetic expressions calculator with separate parser and evaluator.
+
+* [CalcWithVars](https://github.com/pliba/kaminpy/tree/master/CalcWithVars): arithmetic expressions calculator with variables.
 
 ### SubPascal
 
@@ -25,8 +27,6 @@ Kamin's *"chapter 1 language"*, minimal yet Turing-complete, inspired by Pascal 
 * [SubPascalHappyPaths](https://github.com/pliba/kaminpy/tree/master/SubPascalHappyPaths): "complete" SubPascal language, with function definitions but almost no error handling and limited REPL.
 
 * [SubPascal](https://github.com/pliba/kaminpy/tree/master/SubPascal): complete SubPascal with better error handling, multi-line REPL and source file execution.
-
-
 
 ## Source material
 
