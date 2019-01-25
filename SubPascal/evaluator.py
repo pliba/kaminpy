@@ -1,5 +1,5 @@
 import operator
-from typing import Tuple, Any, Optional, Type, Dict, Union, Callable
+from typing import Any, Callable, Dict, Optional, Sequence, Type, Union
 
 import errors
 from parser import Expression
@@ -7,10 +7,10 @@ from parser import Expression
 VARIADIC = -1  # arity of variadic functions or forms
 
 
-def check_arity(form_name: str, arity: int, args: Tuple[Any, ...]):
+def check_arity(form_name: str, arity: int, args: Sequence[Any]):
     if arity == VARIADIC:
         return
-    error_type: Optional[Type[Exception]] = None
+    error_type: Optional[Type[errors.EvaluatorException]] = None
     if len(args) > arity:
         error_type = errors.TooManyArguments
     elif len(args) < arity:
@@ -51,6 +51,7 @@ VALUE_OPS = {op.name: op for op in BUILT_INS}
 
 
 class SpecialForm:
+    arity: int
 
     @property
     def name(self):
@@ -73,7 +74,7 @@ class SetStatement(SpecialForm):
         if name in environment:
             environment[name] = value
         else:
-            global_environment[name] = value
+            global_env[name] = value
         return value
 
 
@@ -131,18 +132,18 @@ class UserFunction:
         return evaluate(local_env, self.body)
 
 
+ValueEnv = Dict[str, int]
+FunctionEnv = Dict[str, UserFunction]
+
+global_env: ValueEnv = {}
+function_env: FunctionEnv = {}
+
+
 def define_function(parts):
     name, formals, body = parts
     user_fn = UserFunction(name, formals, body)
-    function_definitions[name] = user_fn
+    function_env[name] = user_fn
     return repr(user_fn)
-
-
-ValueEnv = Dict[str, int]
-global_environment: ValueEnv = {}
-
-FunctionEnv = Dict[str, UserFunction]
-function_definitions: FunctionEnv = {}
 
 
 def fetch_variable(env: ValueEnv, name: str) -> int:
@@ -150,7 +151,7 @@ def fetch_variable(env: ValueEnv, name: str) -> int:
         return env[name]
     except KeyError:
         try:
-            return global_environment[name]
+            return global_env[name]
         except KeyError as exc:
             raise errors.UndefinedVariable(name) from exc
 
@@ -163,7 +164,7 @@ def fetch_function(name: str) -> Function:
         return VALUE_OPS[name]
     except KeyError:
         try:
-            return function_definitions[name]
+            return function_env[name]
         except KeyError as exc:
             raise errors.UndefinedFunction(name) from exc
 

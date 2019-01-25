@@ -6,13 +6,13 @@ from typing import Deque, List, Union
 import errors
 
 
+Atom = Union[str, int]
+Expression = Union[Atom, List]
+
+
 def tokenize(source: str) -> Deque[str]:
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
     return collections.deque(spaced.split())
-
-
-Atom = Union[str, int]
-Expression = Union[Atom, List]
 
 
 def parse_atom(token: str) -> Atom:

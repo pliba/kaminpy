@@ -48,7 +48,7 @@ def run(source_file, env: ValueEnv = None):
                 continue
 
 
-def main(args):
+def main(args: List[str]):
     if not args:
         repl()
     else:
