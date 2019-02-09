@@ -1,7 +1,0 @@
-(set n 1)
-(while (< n max)
-    (begin
-        (print n)
-        (set n (* n 2))
-    )
-)      
