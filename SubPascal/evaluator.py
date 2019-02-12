@@ -46,6 +46,7 @@ BUILT_INS = [
     Operator('=', operator.eq, 2),
     Operator('<', operator.lt, 2),
     Operator('>', operator.gt, 2),
+    Operator('>=', operator.ge, 2),
     Operator('print', print_fn, 1),
 ]
 
@@ -110,11 +111,24 @@ class WhileStatement(SpecialForm):
         return 0
 
 
+class ForStatement(SpecialForm):
+    arity = 4
+
+    def apply(self, environment, name, exp_first, exp_last, block):
+        i = SetStatement.apply(self, environment, name, exp_first)
+        last_val = evaluate(environment, exp_last)
+        while i <= last_val:
+            evaluate(environment, block)
+            i += 1
+            SetStatement.apply(self, environment, name, i)
+
+
 CONTROL_OPS: Dict[str, SpecialForm] = {
     'set': SetStatement(),
     'if': IfStatement(),
     'begin': BeginStatement(),
     'while': WhileStatement(),
+    'for': ForStatement(),
 }
 
 
@@ -179,7 +193,7 @@ def evaluate(env: ValueEnv, exp: Expression) -> int:
     if isinstance(exp, int):  # number
         return exp
 
-    if isinstance(exp, str):  # variable
+    elif isinstance(exp, str):  # variable
         return fetch_variable(env, exp)
 
     else:  # application expression
