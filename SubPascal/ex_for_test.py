@@ -10,7 +10,7 @@ SERIES_EXAMPLE = """
 """
 
 
-def test_run_doubling_example(capsys):
+def test_for_print(capsys):
     source_file = io.StringIO(SERIES_EXAMPLE)
     run(source_file)
     captured = capsys.readouterr()
