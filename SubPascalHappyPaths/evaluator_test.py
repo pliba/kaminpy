@@ -50,6 +50,7 @@ def test_set_global():
     (['if', 0, 2, 3], 3),
     # (if (> 1 0) 2 (/ 3 0))
     (['if', ['>', 1, 0], 2, ['/', 3, 0]], 2),
+    (['if', ['>', 1, 2], 2, ['/', 8, 2]], 4),
 ])
 def test_evaluate_if(ast, want):
     got = evaluate({}, ast)

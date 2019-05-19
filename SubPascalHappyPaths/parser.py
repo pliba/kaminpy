@@ -17,7 +17,7 @@ def parse(tokens: Deque[str]) -> Expression:
     head = tokens.popleft()
     if head == '(':
         ast = []
-        while tokens[0] != ")":
+        while tokens[0] != ')':
             ast.append(parse(tokens))
         tokens.popleft()  # discard ')'
         return ast
