@@ -115,7 +115,7 @@ def test_define_function():
     want_name = 'double'
     want_formals = ['n']
     want_body = ['*', 'n', 2]
-    got = define_function(parts)
+    got = define_function(*parts)
     assert '<UserFunction (double n)>' == got
     new_func = evaluator.function_env[want_name]
     assert want_name == new_func.name
@@ -154,8 +154,7 @@ def test_apply_user_function():
     initial_fundefs = evaluator.function_env
     evaluator.function_env = {}
     # test
-    parts = 'triple', ['n'], ['*', 'n', 3]
-    define_function(parts)
+    define_function('triple', ['n'], ['*', 'n', 3])
     ast = ['triple', 7]
     assert 21 == evaluate({}, ast)
     # restore function_env
@@ -182,11 +181,11 @@ def test_evaluate_user_function_missing_argument(mod_body):
     initial_fundefs = evaluator.function_env
     evaluator.function_env = {}
     # test
-    define_function(('mod', ['m', 'n'], mod_body))
+    define_function('mod', ['m', 'n'], mod_body)
     ast = ['mod', 19]
     with raises(errors.MissingArgument) as excinfo:
         evaluate({}, ast)
-    assert "Missing argument: 'mod' needs 2." == str(excinfo.value)
+    assert str(excinfo.value) == "Missing argument: 'mod' needs 2."
     # restore function_env
     evaluator.function_env = initial_fundefs
 
@@ -195,4 +194,4 @@ def test_evaluate_if_missing_argument():
     ast = ['if', 3]
     with raises(errors.MissingArgument) as excinfo:
         evaluate({}, ast)
-    assert "Missing argument: 'if' needs 3." == str(excinfo.value)
+    assert str(excinfo.value) == "Missing argument: 'if' needs 3."

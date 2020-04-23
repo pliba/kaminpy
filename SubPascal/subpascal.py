@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import sys
-from typing import List
+from typing import List, TextIO, cast, Tuple
 
-from parser import parse_exp, tokenize
+from parser import parse_exp, tokenize, Expression
 from evaluator import evaluate, define_function, ValueEnv
 from repl import repl
 import errors
@@ -24,7 +24,7 @@ def env_from_args(args: List[str]) -> ValueEnv:
     return env
 
 
-def run(source_file, env: ValueEnv = None):
+def run(source_file: TextIO, env: ValueEnv = None) -> None:
     """Read and execute opened source file"""
     source = source_file.read()
     if env is None:
@@ -39,7 +39,7 @@ def run(source_file, env: ValueEnv = None):
             break
 
         if isinstance(current_exp, list) and current_exp[0] == 'define':
-            define_function(current_exp[1:])
+            define_function(*current_exp[1:])
         else:
             try:
                 evaluate(env, current_exp)
@@ -48,7 +48,7 @@ def run(source_file, env: ValueEnv = None):
                 continue
 
 
-def main(args: List[str]):
+def main(args: List[str]) -> None:
     if not args:
         repl()
     else:

@@ -1,7 +1,5 @@
 import io
 
-from pytest import mark
-
 from subpascal import run, env_from_args
 
 SERIES_EXAMPLE = """

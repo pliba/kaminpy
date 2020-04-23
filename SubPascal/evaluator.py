@@ -1,6 +1,6 @@
 import operator
 from typing import (
-    Any, Callable, Dict, List, Optional, Sequence, Type, Union
+    Any, Callable, Dict, List, Optional, Sequence, Type, Union, Tuple
 )
 
 import errors
@@ -9,7 +9,7 @@ from parser import Expression
 VARIADIC = -1  # arity of variadic functions or forms
 
 
-def check_arity(form_name: str, arity: int, args: Sequence[Any]):
+def check_arity(form_name: str, arity: int, args: Sequence[Any]) -> None:
     if arity == VARIADIC:
         return
     error_type: Optional[Type[errors.EvaluatorException]] = None
@@ -33,7 +33,7 @@ class Operator:
         return self.function(*args)
 
 
-def print_fn(n):
+def print_fn(n: int) -> int:
     print(n)
     return n
 
@@ -54,27 +54,28 @@ OperatorEnv = Dict[str, Operator]
 
 VALUE_OPS: OperatorEnv = {op.name: op for op in BUILT_INS}
 
+ValueEnv = Dict[str, int]
 
 class SpecialForm:
     arity: int
 
     @property
-    def name(self):
+    def name(self) -> str:
         class_name = self.__class__.__name__
         return class_name.replace('Statement', '').lower()
 
-    def __call__(self, environment, *args):
+    def __call__(self, environment: ValueEnv, *args: int) -> int:
         check_arity(self.name, self.arity, args)
         return self.apply(environment, *args)
 
-    def apply(self, *args):
+    def apply(self, *args) -> int:  # type: ignore
         raise NotImplementedError
 
 
 class SetStatement(SpecialForm):
     arity = 2
 
-    def apply(self, environment, name, val_exp):
+    def apply(self, environment, name, val_exp):  # type: ignore
         value = evaluate(environment, val_exp)
         if name in environment:
             environment[name] = value
@@ -86,7 +87,7 @@ class SetStatement(SpecialForm):
 class IfStatement(SpecialForm):
     arity = 3
 
-    def apply(self, environment, condition, consequence, alternative):
+    def apply(self, environment, condition, consequence, alternative):  # type: ignore
         if evaluate(environment, condition):
             return evaluate(environment, consequence)
         else:
@@ -96,7 +97,7 @@ class IfStatement(SpecialForm):
 class BeginStatement(SpecialForm):
     arity = VARIADIC
 
-    def apply(self, environment, *statements):
+    def apply(self, environment, *statements):  # type: ignore
         for statement in statements[:-1]:
             evaluate(environment, statement)
         return evaluate(environment, statements[-1])
@@ -105,7 +106,7 @@ class BeginStatement(SpecialForm):
 class WhileStatement(SpecialForm):
     arity = 2
 
-    def apply(self, environment, condition, block):
+    def apply(self, environment, condition, block):  # type: ignore
         while evaluate(environment, condition):
             evaluate(environment, block)
         return 0
@@ -114,7 +115,7 @@ class WhileStatement(SpecialForm):
 class ForStatement(SpecialForm):
     arity = 4
 
-    def apply(self, environment, name, exp_first, exp_last, block):
+    def apply(self, environment, name, exp_first, exp_last, block):  # type: ignore
         i = SetStatement.apply(self, environment, name, exp_first)
         last_val = evaluate(environment, exp_last)
         while i <= last_val:
@@ -140,25 +141,23 @@ class UserFunction:
         self.arity = len(formals)
         self.body = body
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         formals = ' '.join(self.formals)
         return f'<UserFunction ({self.name} {formals})>'
 
-    def __call__(self, *values):
+    def __call__(self, *values: int) -> int:
         check_arity(self.name, self.arity, values)
         local_env = dict(zip(self.formals, values))
         return evaluate(local_env, self.body)
 
 
-ValueEnv = Dict[str, int]
 FunctionEnv = Dict[str, UserFunction]
 
 global_env: ValueEnv = {}
 function_env: FunctionEnv = {}
 
 
-def define_function(parts):
-    name, formals, body = parts
+def define_function(name: str, formals: List[str], body: Expression) -> str:
     user_fn = UserFunction(name, formals, body)
     function_env[name] = user_fn
     return repr(user_fn)

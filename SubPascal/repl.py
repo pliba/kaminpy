@@ -2,9 +2,11 @@
 
 import sys
 
-from parser import parse_exp, tokenize
+from parser import parse_exp, tokenize, Expression
 from evaluator import evaluate, define_function
 import errors
+
+from typing import Callable, List, Tuple, NoReturn, cast
 
 QUIT_COMMAND = '.q'
 
@@ -13,14 +15,22 @@ class QuitRequest(Exception):
     """Signal to quit multi-line input."""
 
 
-def multiline_input(prompt1='', prompt2='', *, quit_cmd=None, input_fn=input):
-    def raise_unexpected_paren(line):
-        max_msg_len = 16
-        if len(line) < max_msg_len:
-            msg = line
-        else:
-            msg = '\N{HORIZONTAL ELLIPSIS}' + line[-(max_msg_len-1):]
-        raise errors.UnexpectedCloseParen(msg)
+def raise_unexpected_paren(line: str) -> NoReturn:
+    max_msg_len = 16
+    if len(line) < max_msg_len:
+        msg = line
+    else:
+        msg = '\N{HORIZONTAL ELLIPSIS}' + line[-(max_msg_len-1):]
+    raise errors.UnexpectedCloseParen(msg)
+
+
+InputFnType = Callable[[str], str]
+
+def multiline_input(prompt1: str = '',
+                    prompt2: str= '',
+                    *, 
+                    quit_cmd: str = '',
+                    input_fn: InputFnType = input) -> str:
 
     paren_cnt = 0
     lines = []
@@ -44,7 +54,7 @@ def multiline_input(prompt1='', prompt2='', *, quit_cmd=None, input_fn=input):
     return '\n'.join(lines)
 
 
-def repl(input_fn=input):
+def repl(input_fn: InputFnType = input) -> None:
     """Read-Eval-Print-Loop"""
     print(f'To exit, type {QUIT_COMMAND}', file=sys.stderr)
 
@@ -62,13 +72,15 @@ def repl(input_fn=input):
         if not source:
             continue
 
+        # def define_function(parts: Tuple[str, List[str], Expression]) -> str:
+
         # ___________________________________________ Eval
         current_exp = parse_exp(tokenize(source))
         if isinstance(current_exp, list) and current_exp[0] == 'define':
-            result = define_function(current_exp[1:])
+            result = define_function(*current_exp[1:])
         else:
             try:
-                result = evaluate({}, current_exp)
+                result = str(evaluate({}, current_exp))
             except errors.EvaluatorException as exc:
                 print('***', exc)
                 continue
