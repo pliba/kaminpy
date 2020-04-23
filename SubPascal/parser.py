@@ -28,7 +28,7 @@ def parse_exp(tokens: Deque[str]) -> Expression:
     head = tokens.popleft()
     if head == '(':
         ast = []
-        while tokens and tokens[0] != ")":
+        while tokens and tokens[0] != ')':
             ast.append(parse_exp(tokens))
         if not tokens:
             raise errors.UnexpectedEndOfSource()
