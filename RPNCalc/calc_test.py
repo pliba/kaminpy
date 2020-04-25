@@ -1,6 +1,6 @@
-from pytest import mark, approx
+from pytest import mark, approx  # type: ignore
 
-from dialogue import Dialogue
+from dialogue import Dialogue  # type: ignore
 
 from calc import evaluate, repl, format_stack
 
@@ -19,9 +19,9 @@ def test_evaluate(source, want):
 
 
 @mark.parametrize("value, want", [
-    ([], '[]'),
-    ([3], '[3]'),
-    ([3, 4, 5], '3 4 [5]'),
+    ([], ' →'),
+    ([3], '3.0 →'),
+    ([3, 4, 5], '3.0 │ 4.0 │ 5.0 →'),
 ])
 def test_format_stack(value, want):
     assert want == format_stack(value)
@@ -30,15 +30,15 @@ def test_format_stack(value, want):
 @mark.parametrize("session", [
     """
     > 3
-    [3.0]
+    3.0 →
     """,
     """
     > 3 5 6
-    3.0 5.0 [6.0]
+    3.0 │ 5.0 │ 6.0 →
     > *
-    3.0 [30.0]
+    3.0 │ 30.0 →
     > -
-    [-27.0]
+    -27.0 →
     """,
 ])
 def test_repl(capsys, session):

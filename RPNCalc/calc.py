@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import inspect
+from typing import MutableSequence, Callable, List
 
 
 OPERATORS = {
@@ -12,7 +12,7 @@ OPERATORS = {
 }
 
 
-def evaluate(tokens, stack):
+def evaluate(tokens: MutableSequence[str], stack: MutableSequence[float]) -> float:
     while tokens:
         head = tokens.pop(0)
         try:
@@ -26,35 +26,37 @@ def evaluate(tokens, stack):
 
 
 CLEAR_COMMAND = 'c'
+QUIT_COMMAND = 'q'
 
 
-def format_stack(stack):
-    if len(stack) == 0:
-        return '[]'
-    items = [str(n) for n in stack[:-1]] + [f'[{stack[-1]}]']
-    return ' '.join(items)
+def format_stack(stack: MutableSequence[float]) -> str:
+    items = (f'{n:.1f}' for n in stack)
+    return (' │ '.join(items) + ' →')
 
 
-def repl(input_fn=input):
+def repl(input_fn: Callable[[str], str] = input) -> None:
     """Read-Eval-Print-Loop"""
     print(f'To clear stack, type {CLEAR_COMMAND}', file=sys.stderr)
-    stack = []
+    print(f'To quit, type {QUIT_COMMAND}', file=sys.stderr)
+    stack: List[float] = []
     while True:
         try:
-            line = input_fn('> ')   # Read
+            line = input_fn('> ')                # Read
         except (EOFError, KeyboardInterrupt):
             print()
             break
         if line == CLEAR_COMMAND:
             stack = []
+        elif line == QUIT_COMMAND:
+            return
         else:
             stack_backup = stack[:]
             try:
-                evaluate(line.split(), stack)   # Eval
+                evaluate(line.split(), stack)     # Eval
             except IndexError:
                 print('*** Not enough arguments.', file=sys.stderr)
                 stack = stack_backup
-        print(format_stack(stack))                  # Print
+        print(format_stack(stack))                # Print
 
 
 if __name__ == '__main__':
