@@ -13,8 +13,10 @@ OPERATORS = {
     '^': lambda a, b: a ** b,
 }
 
+Stack = MutableSequence[float]
 
-def evaluate(tokens: Iterable[str], stack: MutableSequence[float]) -> None:
+
+def evaluate(tokens: Iterable[str], stack: Stack) -> None:
     for head in tokens:
         try:
             stack.append(float(head))
@@ -25,16 +27,16 @@ def evaluate(tokens: Iterable[str], stack: MutableSequence[float]) -> None:
             stack.append(result)
 
 
-def format_stack(stack: MutableSequence[float]) -> str:
+def format_stack(stack: Stack) -> str:
     items = (repr(n) for n in stack)
-    return (' │ '.join(items) + ' →')
+    return ' │ '.join(items) + ' →'
 
 
 def repl(input_fn: Callable[[str], str] = input) -> None:
     """Read-Eval-Print-Loop"""
 
     print('Use CTRL+C to quit.', file=sys.stderr)
-    stack: MutableSequence[float] = array('d')
+    stack: Stack = array('d')
 
     while True:
         try:
@@ -53,6 +55,7 @@ def repl(input_fn: Callable[[str], str] = input) -> None:
         print(format_stack(stack))             # Print
 
     print()
+
 
 if __name__ == '__main__':
     repl()
