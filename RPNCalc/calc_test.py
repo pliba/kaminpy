@@ -4,24 +4,27 @@ from dialogue import Dialogue  # type: ignore
 
 from calc import evaluate, repl, format_stack
 
+TOLERANCE = .0001
 
 @mark.parametrize("source, want", [
     ('2', 2),
     ('2 3 +', 5),
     ('5 3 -', 2),
     ('3 5 * 2 +', 17),
-    ('100 32 - 5 * 9 /', approx(37.7, .01)),
+    ('2 3 4 5 * * *', 120),
+    ('1.1 1.1 1.1 + +', approx(3.3, TOLERANCE)),
+    ('100 32 - 5 * 9 /', approx(37.78, TOLERANCE)),
 ])
 def test_evaluate(source, want):
     stack = [] 
-    got = evaluate(source.split(), stack)
-    assert want == got
+    evaluate(source.split(), stack)
+    assert want == stack[-1]
 
 
 @mark.parametrize("value, want", [
     ([], ' →'),
-    ([3], '3.0 →'),
-    ([3, 4, 5], '3.0 │ 4.0 │ 5.0 →'),
+    ([3.], '3.0 →'),
+    ([3., 4., 5.], '3.0 │ 4.0 │ 5.0 →'),
 ])
 def test_format_stack(value, want):
     assert want == format_stack(value)

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
-from typing import MutableSequence, Callable, List
+from array import array
+from typing import MutableSequence, Callable, List, Iterable, Iterator
 
 
 OPERATORS = {
@@ -13,9 +14,8 @@ OPERATORS = {
 }
 
 
-def evaluate(tokens: MutableSequence[str], stack: MutableSequence[float]) -> float:
-    while tokens:
-        head = tokens.pop(0)
+def evaluate(tokens: Iterable[str], stack: MutableSequence[float]) -> None:
+    for head in tokens:
         try:
             stack.append(float(head))
         except ValueError:
@@ -23,42 +23,36 @@ def evaluate(tokens: MutableSequence[str], stack: MutableSequence[float]) -> flo
             x, y = stack.pop(), stack.pop()
             result = op(y, x)
             stack.append(result)
-    return stack[-1]
-
-
-CLEAR_COMMAND = 'c'
-QUIT_COMMAND = 'q'
 
 
 def format_stack(stack: MutableSequence[float]) -> str:
-    items = (f'{n:.1f}' for n in stack)
+    items = (repr(n) for n in stack)
     return (' │ '.join(items) + ' →')
 
 
 def repl(input_fn: Callable[[str], str] = input) -> None:
     """Read-Eval-Print-Loop"""
-    print(f'To clear stack, type {CLEAR_COMMAND}', file=sys.stderr)
-    print(f'To quit, type {QUIT_COMMAND}', file=sys.stderr)
-    stack: List[float] = []
+
+    print('Use CTRL+C to quit.', file=sys.stderr)
+    stack: MutableSequence[float] = array('d')
+
     while True:
         try:
-            line = input_fn('> ')                # Read
+            line = input_fn('> ')              # Read
         except (EOFError, KeyboardInterrupt):
-            print()
             break
-        if line == CLEAR_COMMAND:
-            stack = []
-        elif line == QUIT_COMMAND:
-            return
-        else:
-            stack_backup = stack[:]
-            try:
-                evaluate(line.split(), stack)     # Eval
-            except IndexError:
-                print('*** Not enough arguments.', file=sys.stderr)
-                stack = stack_backup
-        print(format_stack(stack))                # Print
+        stack_backup = stack[:]
+        try:
+            evaluate(line.split(), stack)      # Eval
+        except IndexError:
+            print('*** Not enough arguments.', file=sys.stderr)
+            stack = stack_backup
+        except KeyError as exc:
+            print('*** Unknown operator:', repr(exc.args[0]), file=sys.stderr)
+            stack = stack_backup
+        print(format_stack(stack))             # Print
 
+    print()
 
 if __name__ == '__main__':
     repl()
