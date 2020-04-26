@@ -2,7 +2,7 @@
 
 import sys
 from array import array
-from typing import MutableSequence, Callable, List, Iterable, Iterator
+from typing import MutableSequence, Callable, List, Iterable, Iterator, Sequence
 
 
 OPERATORS = {
@@ -27,8 +27,8 @@ def evaluate(tokens: Iterable[str], stack: Stack) -> None:
             stack.append(result)
 
 
-def format_stack(stack: Stack) -> str:
-    items = (repr(n) for n in stack)
+def display(s: Sequence) -> str:
+    items = (repr(n) for n in s)
     return ' │ '.join(items) + ' →'
 
 
@@ -52,7 +52,7 @@ def repl(input_fn: Callable[[str], str] = input) -> None:
         except KeyError as exc:
             print('*** Unknown operator:', repr(exc.args[0]), file=sys.stderr)
             stack = stack_backup
-        print(format_stack(stack))             # Print
+        print(display(stack))             # Print
 
     print()
 

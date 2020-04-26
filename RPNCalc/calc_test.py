@@ -2,7 +2,7 @@ from pytest import mark, approx  # type: ignore
 
 from dialogue import Dialogue  # type: ignore
 
-from calc import evaluate, repl, format_stack
+from calc import evaluate, repl, display
 
 TOLERANCE = .0001
 
@@ -26,8 +26,8 @@ def test_evaluate(source, want):
     ([3.], '3.0 →'),
     ([3., 4., 5.], '3.0 │ 4.0 │ 5.0 →'),
 ])
-def test_format_stack(value, want):
-    assert want == format_stack(value)
+def test_display(value, want):
+    assert want == display(value)
 
 
 @mark.parametrize("session", [
