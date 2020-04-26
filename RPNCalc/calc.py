@@ -17,11 +17,11 @@ Stack = MutableSequence[float]
 
 
 def evaluate(tokens: Iterable[str], stack: Stack) -> None:
-    for head in tokens:
+    for token in tokens:
         try:
-            stack.append(float(head))
+            stack.append(float(token))
         except ValueError:
-            op = OPERATORS[head]
+            op = OPERATORS[token]
             x, y = stack.pop(), stack.pop()
             result = op(y, x)
             stack.append(result)
