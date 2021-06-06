@@ -124,7 +124,7 @@ class For(SpecialForm):
             Let.apply(self, environment, name, i)
 
 
-CONTROL_OPS: Dict[str, SpecialForm] = {
+SPECIAL_FORMS: Dict[str, SpecialForm] = {
     'let': Let(),
     'if': If(),
     'begin': Begin(),
@@ -185,26 +185,19 @@ def fetch_function(name: str) -> Function:
         except KeyError as exc:
             raise errors.UndefinedFunction(name) from exc
 
-
 def evaluate(env: ValueEnv, exp: Expression) -> int:
-    """Given an environment, evaluate expression."""
-
-    if isinstance(exp, int):  # number
-        return exp
-
-    elif isinstance(exp, str):  # variable
-        return fetch_variable(env, exp)
-
-    else:  # application expression
-        op_name = exp[0]
-        args = exp[1:]
-        if op_name in CONTROL_OPS:
-            statement = CONTROL_OPS[op_name]
+    """Compute value of `exp` in `env`; return a number."""
+    match exp:
+        case [symbol, *args] if statement := SPECIAL_FORMS.get(symbol):
             return statement(env, *args)
-        else:
-            op = fetch_function(op_name)
-            values = tuple(evaluate(env, x) for x in args)
+        case [symbol, *args]:
+            func = fetch_function(symbol)
+            values = (evaluate(env, x) for x in args)
             try:
-                return op(*values)
+                return func(*values)
             except ZeroDivisionError as exc:
                 raise errors.DivisionByZero() from exc
+        case str():
+            return fetch_variable(env, exp)
+        case int():
+            return exp
