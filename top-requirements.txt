@@ -1,0 +1,4 @@
+dialogue-tester
+flake8
+mypy
+pytest

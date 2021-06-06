@@ -9,15 +9,12 @@ VALUE_OPS = {
     '/': operator.floordiv,
 }
 
-
 def evaluate(exp: Expression) -> int:
     """Evaluate expression, return its value (a number)."""
-
-    if isinstance(exp, int):  # number
-        return exp
-    else:  # application expression
-        op_name = exp[0]
-        op = VALUE_OPS[op_name]
-        args = exp[1:]
-        values = (evaluate(x) for x in args)
-        return op(*values)
+    match exp:
+        case [op, *args] if op in VALUE_OPS:
+            func = VALUE_OPS[op]
+            values = map(evaluate, args)
+            return func(*values)
+        case atom:
+            return float(atom)
