@@ -1,6 +1,5 @@
 import operator
-
-from parser import Expression
+from typing import TypeAlias
 
 VALUE_OPS = {
     '+': operator.add,
@@ -9,12 +8,15 @@ VALUE_OPS = {
     '/': operator.floordiv,
 }
 
+Atom: TypeAlias = str | int
+Expression: TypeAlias = Atom | list
+
 def evaluate(exp: Expression) -> int:
-    """Evaluate expression, return its value (a number)."""
+    """Compute value of expression; return a number."""
     match exp:
         case [op, *args] if op in VALUE_OPS:
             func = VALUE_OPS[op]
             values = map(evaluate, args)
             return func(*values)
         case atom:
-            return float(atom)
+            return int(atom)

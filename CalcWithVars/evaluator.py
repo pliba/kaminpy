@@ -43,3 +43,22 @@ def evaluate(exp: Expression) -> int:
             op = VALUE_OPS[op_name]
             values = (evaluate(x) for x in args)
             return op(*values)
+
+
+def evaluate(exp: Expression) -> int:
+    """Compute value of expression; return a number."""
+    match exp:
+        case ['set', var_name, value_exp]:
+            return set_statement(var_name, value_exp)
+        case [op, *args] if op in VALUE_OPS:
+            func = VALUE_OPS[op]
+            values = map(evaluate, args)
+            return func(*values)
+        case symbol if value := global_environment.get(symbol):
+            return value
+        case atom:
+            try:
+                return int(atom)
+            except ValueError as exc:
+                raise errors.UndefinedVariable(atom) from exc
+
