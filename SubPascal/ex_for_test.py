@@ -3,7 +3,7 @@ import io
 from subpascal import run, env_from_args
 
 SERIES_EXAMPLE = """
-(set n 5)
+(let n 5)
 (for i 1 n (print i))
 """
 

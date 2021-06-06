@@ -62,7 +62,7 @@ class SpecialForm:
     @property
     def name(self) -> str:
         class_name = self.__class__.__name__
-        return class_name.replace('Statement', '').lower()
+        return class_name.lower()
 
     def __call__(self, environment: ValueEnv, *args: int) -> int:
         check_arity(self.name, self.arity, args)
@@ -72,7 +72,7 @@ class SpecialForm:
         raise NotImplementedError
 
 
-class SetStatement(SpecialForm):
+class Let(SpecialForm):
     arity = 2
 
     def apply(self, environment, name, val_exp):  # type: ignore
@@ -84,7 +84,7 @@ class SetStatement(SpecialForm):
         return value
 
 
-class IfStatement(SpecialForm):
+class If(SpecialForm):
     arity = 3
 
     def apply(self, environment, condition, consequence, alternative):  # type: ignore
@@ -94,7 +94,7 @@ class IfStatement(SpecialForm):
             return evaluate(environment, alternative)
 
 
-class BeginStatement(SpecialForm):
+class Begin(SpecialForm):
     arity = VARIADIC
 
     def apply(self, environment, *statements):  # type: ignore
@@ -103,7 +103,7 @@ class BeginStatement(SpecialForm):
         return evaluate(environment, statements[-1])
 
 
-class WhileStatement(SpecialForm):
+class While(SpecialForm):
     arity = 2
 
     def apply(self, environment, condition, block):  # type: ignore
@@ -112,24 +112,24 @@ class WhileStatement(SpecialForm):
         return 0
 
 
-class ForStatement(SpecialForm):
+class For(SpecialForm):
     arity = 4
 
     def apply(self, environment, name, exp_first, exp_last, block):  # type: ignore
-        i = SetStatement.apply(self, environment, name, exp_first)
+        i = Let.apply(self, environment, name, exp_first)
         last_val = evaluate(environment, exp_last)
         while i <= last_val:
             evaluate(environment, block)
             i += 1
-            SetStatement.apply(self, environment, name, i)
+            Let.apply(self, environment, name, i)
 
 
 CONTROL_OPS: Dict[str, SpecialForm] = {
-    'set': SetStatement(),
-    'if': IfStatement(),
-    'begin': BeginStatement(),
-    'while': WhileStatement(),
-    'for': ForStatement(),
+    'let': Let(),
+    'if': If(),
+    'begin': Begin(),
+    'while': While(),
+    'for': For(),
 }
 
 

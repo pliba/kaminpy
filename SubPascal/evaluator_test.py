@@ -26,14 +26,14 @@ def test_evaluate_undefined_variable():
     assert "Undefined variable: 'x'." == str(excinfo.value)
 
 
-def test_set_global():
+def test_let_global():
     # backup global_env
     import evaluator
     initial_globals = evaluator.global_env
     evaluator.global_env = {}
     # test
-    ast = ['set', 'test_set_var', ['/', 6, 2]]
-    want_name = 'test_set_var'
+    ast = ['let', 'test_let_var', ['/', 6, 2]]
+    want_name = 'test_let_var'
     want_value = 3
     empty_env = {}
     got = evaluate(empty_env, ast)
@@ -91,11 +91,11 @@ def test_while(capsys):
     evaluator.global_env = {}
     # test
     ast = ['begin',
-           ['set', 'x', 3],
+           ['let', 'x', 3],
            ['while', 'x',
             ['begin',
              ['print', 'x'],
-             ['set', 'x', ['-', 'x', 1]]
+             ['let', 'x', ['-', 'x', 1]]
              ]]]
     got = evaluate({}, ast)
     assert 0 == got

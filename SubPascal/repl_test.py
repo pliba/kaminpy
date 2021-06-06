@@ -100,7 +100,7 @@ def test_repl_quit_other_cases(capsys, session):
     *** Undefined variable: 'x'.
     """,
     """
-    > (set n (* 4 2))
+    > (let n (* 4 2))
     8
     > (* n n)
     64
@@ -144,12 +144,12 @@ def test_repl_gcd_example_multiline(capsys):
     <UserFunction (mod m n)>
     > (define gcd (m n)
     ...  (begin
-    ...      (set r (mod m n))
+    ...      (let r (mod m n))
     ...      (while (<> r 0)
     ...           (begin
-    ...                (set m n)
-    ...                (set n r)
-    ...                (set r (mod m n))))
+    ...                (let m n)
+    ...                (let n r)
+    ...                (let r (mod m n))))
     ... n))
     <UserFunction (gcd m n)>
     > (gcd 42 56)

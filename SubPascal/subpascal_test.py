@@ -20,11 +20,11 @@ def test_run_multiple_lines(capsys):
 
 
 DOUBLING_EXAMPLE = """
-(set n 1)
+(let n 1)
 (while (< n 500)
     (begin
         (print n)
-        (set n (* n 2))
+        (let n (* n 2))
     )
 )
 """
@@ -43,12 +43,12 @@ GCD_EXAMPLE = """
 (define mod (m n) (- m (* n (/ m n))))
 (define gcd (m n)
     (begin
-        (set r (mod m n))
+        (let r (mod m n))
         (while (<> r 0)
             (begin
-                (set m n)
-                (set n r)
-                (set r (mod m n))))
+                (let m n)
+                (let n r)
+                (let r (mod m n))))
         n))
 (print(gcd 18 35))
 """

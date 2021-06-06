@@ -12,7 +12,7 @@ VALUE_OPS = {
 }
 
 
-def set_statement(name: str, exp: Expression) -> int:
+def let_statement(name: str, exp: Expression) -> int:
     value = evaluate(exp)
     global_environment[name] = value
     return value
@@ -36,9 +36,9 @@ def evaluate(exp: Expression) -> int:
     else:  # application expression
         op_name = exp[0]
         args = exp[1:]
-        if op_name == 'set':
+        if op_name == 'let':
             name, val_exp = args
-            return set_statement(name, val_exp)
+            return let_statement(name, val_exp)
         else:
             op = VALUE_OPS[op_name]
             values = (evaluate(x) for x in args)
@@ -48,8 +48,8 @@ def evaluate(exp: Expression) -> int:
 def evaluate(exp: Expression) -> int:
     """Compute value of expression; return a number."""
     match exp:
-        case ['set', var_name, value_exp]:
-            return set_statement(var_name, value_exp)
+        case ['let', var_name, value_exp]:
+            return let_statement(var_name, value_exp)
         case [op, *args] if op in VALUE_OPS:
             func = VALUE_OPS[op]
             values = map(evaluate, args)

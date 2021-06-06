@@ -26,9 +26,9 @@ def test_evaluate_undefined_variable():
     assert "Undefined variable: 'x'." == str(excinfo.value)
 
 
-def test_set():
-    ast = ['set', 'test_set_var', ['/', 6, 2]]
-    want_name = 'test_set_var'
+def test_let():
+    ast = ['let', 'test_let_var', ['/', 6, 2]]
+    want_name = 'test_let_var'
     want_value = 3
     got = evaluate(ast)
     assert want_value == got

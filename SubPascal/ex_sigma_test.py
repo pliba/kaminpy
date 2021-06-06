@@ -33,10 +33,10 @@ def test_sigma_recursive(capsys, src, output):
 
 sigma_while_src = """
 (define sigma (m n) (begin
-    (set total 0)
+    (let total 0)
     (while (>= n m) (begin
-        (set total (+ total n))
-        (set n (- n 1))
+        (let total (+ total n))
+        (let n (- n 1))
     ))
     total
 ))
