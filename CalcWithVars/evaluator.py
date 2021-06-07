@@ -31,10 +31,8 @@ def evaluate(exp: Expression) -> Number:
         case [op, *args] if func := VALUE_OPS.get(op):
             values = map(evaluate, args)
             return func(*values)
-        case variable if value := global_env.get(variable):
+        case variable if (value := global_env.get(variable)) is not None:
             return value
-        case float():
-            return exp
         case int() | float():
             return exp
         case _:
