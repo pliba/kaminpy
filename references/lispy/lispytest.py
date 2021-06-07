@@ -36,11 +36,11 @@ lis_tests = [
     ]
 
 def test(tests, name=''):
-    "For each (exp, expected) test case, see if eval(parse(exp)) == expected."
+    "For each (exp, expected) test case, see if evaluate(parse(exp)) == expected."
     fails = 0
     for (x, expected) in tests:
         try:
-            result = eval(parse(x))
+            result = evaluate(parse(x))
             print(x, '=>', lispstr(result))
             ok = (result == expected)
         except Exception as e:

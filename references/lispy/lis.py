@@ -19,7 +19,7 @@ class Procedure(object):
         self.parms, self.body, self.env = parms, body, env
     def __call__(self, *args):
         env =  Environment(dict(zip(self.parms, args)), self.env)
-        return eval(self.body, env)
+        return evaluate(self.body, env)
 
 ################ Global Environment
 
@@ -95,7 +95,7 @@ def atom(token):
 def repl(prompt='lis.py> '):
     "A prompt-read-eval-print loop."
     while True:
-        val = eval(parse(input(prompt)))
+        val = evaluate(parse(input(prompt)))
         if val is not None:
             print(lispstr(val))
 
@@ -106,9 +106,9 @@ def lispstr(exp):
     else:
         return str(exp)
 
-################ eval
+################ evaluate
 
-def eval(x, env=global_env):
+def evaluate(x, env=global_env):
     match x:
         case Symbol():                                # variable reference
             return env[x]
@@ -117,13 +117,13 @@ def eval(x, env=global_env):
         case ['quote', exp]:                          # (quote exp)
             return exp
         case ['if', test, conseq, alt]:               # (if test conseq alt)
-            exp = conseq if eval(test, env) else alt
-            return eval(exp, env)
+            exp = conseq if evaluate(test, env) else alt
+            return evaluate(exp, env)
         case ['define', var, exp]:                    # (define var exp)
-            env[var] = eval(exp, env)
+            env[var] = evaluate(exp, env)
         case ['lambda', parms, body]:                 # (lambda (var...) body)
             return Procedure(parms, body, env)
         case [op, *args]:                             # (proc arg...)
-            proc = eval(op, env)
-            values = (eval(arg, env) for arg in args)
+            proc = evaluate(op, env)
+            values = (evaluate(arg, env) for arg in args)
             return proc(*values)
