@@ -7,7 +7,7 @@ def divide(a, b):
     return i if i == q else q
 
 VALUE_OPS = {
-    '+': operator.add,
+    '+': lambda *args: sum(args),
     '-': operator.sub,
     '*': operator.mul,
     '/': divide,
