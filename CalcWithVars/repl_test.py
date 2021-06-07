@@ -41,6 +41,10 @@ def test_repl_quit(capsys):
     *** Undefined variable: 'x'.
     """,
     """
+    > (let x 3.1416)
+    3.1416
+    > x
+    3.1416
     > (let n (* 4 2))
     8
     > (* n n)

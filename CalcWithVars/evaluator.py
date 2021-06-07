@@ -16,7 +16,7 @@ VALUE_OPS = {
 }
 
 Number: TypeAlias = int | float
-Atom: TypeAlias = str | float
+Atom: TypeAlias = str | Number
 Expression: TypeAlias = Atom | list
 
 global_env: dict[str, int] = {}

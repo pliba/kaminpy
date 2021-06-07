@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Union
+from typing import TypeAlias
 
 
 def tokenize(source: str) -> deque[str]:
@@ -7,8 +7,18 @@ def tokenize(source: str) -> deque[str]:
     return deque(spaced.split())
 
 
-Atom = Union[str, float]
-Expression = Union[Atom, list]
+Number: TypeAlias = int | float
+Atom: TypeAlias = str | float
+Expression: TypeAlias = Atom | list
+
+
+def parse_number(s: str) -> Number:
+    if '.' in s:
+        f = float(s)
+        i = int(f)
+        return i if i == f else f
+    else:
+        return int(s)
 
 
 def parse(tokens: deque[str]) -> Expression:
@@ -21,7 +31,7 @@ def parse(tokens: deque[str]) -> Expression:
         return ast
     else:
         try:
-            return float(head) if '.' in head else int(head)
+            return parse_number(head)
         except ValueError:
             return head
 

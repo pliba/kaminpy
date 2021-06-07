@@ -5,10 +5,13 @@ from parser import parse, tokenize
 
 @mark.parametrize("source, ast", [
     ('7', 7),
+    ('7.0', 7),
+    ('7.7', 7.7),
     ('+', '+'),
 ])
 def test_parse_atoms(source, ast):
     got = parse(tokenize(source))
+    assert type(ast) == type(got)
     assert ast == got
 
 
