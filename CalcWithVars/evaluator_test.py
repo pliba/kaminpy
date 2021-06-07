@@ -1,3 +1,4 @@
+from math import isclose
 from pytest import mark, raises
 
 from evaluator import evaluate, global_env
@@ -9,14 +10,20 @@ def test_evaluate_number():
     assert 7 == got
 
 
-@mark.parametrize("ast, value", [
+@mark.parametrize("ast, expected", [
     (['+', 1, 2], 3),
     (['*', 6, ['+', 3, 4]], 42),
-    (['/', ['*', ['-', 100, 32], 5], 9], 37)
+    (['/', 6.0, 3.0], 2),
+    (['/', 5, 2], 2.5),
+    (['/', ['*', ['-', 100, 32], 5], 9], 37.778)
 ])
-def test_expression(ast, value):
+def test_expression(ast, expected):
         got = evaluate(ast)
-        assert value == got
+        assert type(got) is type(expected)
+        if isinstance(expected, int):
+            assert expected == got
+        else:
+            assert isclose(expected, got, rel_tol=.01)
 
 
 def test_evaluate_undefined_variable():

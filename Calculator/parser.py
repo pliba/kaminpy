@@ -19,11 +19,9 @@ def parse(tokens: deque[str]) -> Expression:
             ast.append(parse(tokens))
         tokens.popleft()  # discard ')'
         return ast
-    if '.' in head:
-        return float(head)
     else:
         try:
-            return int(head)
+            return float(head) if '.' in head else int(head)
         except ValueError:
             return head
 

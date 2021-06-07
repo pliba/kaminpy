@@ -19,10 +19,14 @@ def parse(tokens: deque[str]) -> Expression:
             ast.append(parse(tokens))
         tokens.popleft()  # discard ')'
         return ast
-    try:
-        return float(head)
-    except ValueError:
-        return head
+    else:
+        try:
+            if '.' in head:
+                return float(head)
+            else:
+                return int(head)
+        except ValueError:
+            return head
 
 
 if __name__ == '__main__':

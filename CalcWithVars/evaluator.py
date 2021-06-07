@@ -3,20 +3,25 @@ from typing import TypeAlias
 
 import errors
 
+def divide(a, b):
+    q = a / b
+    i = int(q)
+    return i if i == q else q
+
 VALUE_OPS = {
-    '+': operator.add,
+    '+': lambda *args: sum(args),
     '-': operator.sub,
     '*': operator.mul,
-    '/': operator.floordiv,
+    '/': divide,
 }
 
+Number: TypeAlias = int | float
 Atom: TypeAlias = str | float
 Expression: TypeAlias = Atom | list
 
 global_env: dict[str, int] = {}
 
-
-def evaluate(exp: Expression) -> int:
+def evaluate(exp: Expression) -> Number:
     """Compute value of expression; return a number."""
     match exp:
         case ['let', name, exp]:
@@ -30,7 +35,7 @@ def evaluate(exp: Expression) -> int:
             return value
         case float():
             return exp
-        case int():
-            return float(exp)
+        case int() | float():
+            return exp
         case _:
             raise errors.UndefinedVariable(exp)
