@@ -1,17 +1,17 @@
-import collections
-from typing import Deque, List, Union
+from collections import deque
+from typing import Union
 
 
-def tokenize(source: str) -> Deque[str]:
+def tokenize(source: str) -> deque[str]:
     spaced = source.replace('(', ' ( ').replace(')', ' ) ')
-    return collections.deque(spaced.split())
+    return deque(spaced.split())
 
 
-Atom = Union[str, int]
-Expression = Union[Atom, List]
+Atom = Union[str, float]
+Expression = Union[Atom, list]
 
 
-def parse(tokens: Deque[str]) -> Expression:
+def parse(tokens: deque[str]) -> Expression:
     head = tokens.popleft()
     if head == '(':
         ast = []
@@ -20,7 +20,7 @@ def parse(tokens: Deque[str]) -> Expression:
         tokens.popleft()  # discard ')'
         return ast
     try:
-        return int(head)
+        return float(head)
     except ValueError:
         return head
 

@@ -1,7 +1,6 @@
 import operator
-from typing import Dict
+from typing import TypeAlias
 
-from parser import Expression
 import errors
 
 VALUE_OPS = {
@@ -11,30 +10,27 @@ VALUE_OPS = {
     '/': operator.floordiv,
 }
 
+Atom: TypeAlias = str | float
+Expression: TypeAlias = Atom | list
 
-def let_statement(name: str, exp: Expression) -> int:
-    value = evaluate(exp)
-    global_environment[name] = value
-    return value
-
-
-global_environment: Dict[str, int] = {}
+global_env: dict[str, int] = {}
 
 
 def evaluate(exp: Expression) -> int:
     """Compute value of expression; return a number."""
     match exp:
-        case ['let', var_name, value_exp]:
-            return let_statement(var_name, value_exp)
-        case [op, *args] if op in VALUE_OPS:
-            func = VALUE_OPS[op]
+        case ['let', name, exp]:
+            value = evaluate(exp)
+            global_env[name] = value
+            return value
+        case [op, *args] if func := VALUE_OPS.get(op):
             values = map(evaluate, args)
             return func(*values)
-        case symbol if value := global_environment.get(symbol):
+        case variable if value := global_env.get(variable):
             return value
-        case atom:
-            try:
-                return int(atom)
-            except ValueError as exc:
-                raise errors.UndefinedVariable(atom) from exc
-
+        case float():
+            return exp
+        case int():
+            return float(exp)
+        case _:
+            raise errors.UndefinedVariable(exp)

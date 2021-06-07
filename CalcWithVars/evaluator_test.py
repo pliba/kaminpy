@@ -1,6 +1,6 @@
 from pytest import mark, raises
 
-from evaluator import evaluate, global_environment
+from evaluator import evaluate, global_env
 import errors
 
 
@@ -32,6 +32,6 @@ def test_let():
     want_value = 3
     got = evaluate(ast)
     assert want_value == got
-    assert want_name in global_environment
-    assert want_value == global_environment[want_name]
-    del global_environment[want_name]
+    assert want_name in global_env
+    assert want_value == global_env[want_name]
+    del global_env[want_name]
