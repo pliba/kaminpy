@@ -24,6 +24,8 @@ global_env: dict[str, int] = {}
 def evaluate(exp: Expression) -> Number:
     """Compute value of expression; return a number."""
     match exp:
+        case int() | float():
+            return exp
         case ['let', name, exp]:
             value = evaluate(exp)
             global_env[name] = value
@@ -33,7 +35,5 @@ def evaluate(exp: Expression) -> Number:
             return func(*values)
         case variable if (value := global_env.get(variable)) is not None:
             return value
-        case int() | float():
-            return exp
         case _:
             raise errors.UndefinedVariable(exp)
